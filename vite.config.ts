@@ -164,9 +164,6 @@ export default defineConfig(({ mode }) => {
             // React core
             'react-vendor': ['react', 'react-dom'],
 
-            // Firebase
-            'firebase-vendor': ['firebase/app', 'firebase/auth', 'firebase/firestore'],
-
             // Charts and visualization
             'charts-vendor': ['recharts'],
 
@@ -205,7 +202,7 @@ export default defineConfig(({ mode }) => {
 
     // Optimize dependencies
     optimizeDeps: {
-      include: ['react', 'react-dom', 'firebase/app', 'firebase/auth', 'firebase/firestore', 'recharts'],
+      include: ['react', 'react-dom', 'recharts'],
       exclude: ['@google/genai'],
     },
   };

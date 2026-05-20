@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { auth } from '../services/firebaseService';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { login } from '../services/authApi';
 import Spinner from './Spinner';
 
 const Auth: React.FC<{ authError?: string | null }> = ({ authError }) => {
@@ -15,30 +14,13 @@ const Auth: React.FC<{ authError?: string | null }> = ({ authError }) => {
     setIsLoading(true);
     setError(null);
 
-    let emailToAuth = username.trim();
-    if (!emailToAuth.includes('@')) {
-      emailToAuth += '';
-    }
+    const emailToAuth = username.trim();
 
     try {
-      await signInWithEmailAndPassword(auth, emailToAuth, password);
-    }
-    catch (err: any) {
-      let friendlyMessage = "An unknown error occurred. Please try again.";
-      switch (err.code) {
-        case 'auth/invalid-email':
-          friendlyMessage = "The username must be a valid email address.";
-          break;
-        case 'auth/user-not-found':
-        case 'auth/wrong-password':
-        case 'auth/invalid-credential':
-          friendlyMessage = "Invalid username or password.";
-          break;
-        default:
-          friendlyMessage = err.message.replace('Firebase: ', '');
-          break;
-      }
-      setError(friendlyMessage);
+      await login(emailToAuth, password);
+      window.dispatchEvent(new CustomEvent('nh:auth-changed'));
+    } catch (err: any) {
+      setError(err?.message || 'Invalid username or password.');
     } finally {
       setIsLoading(false);
     }

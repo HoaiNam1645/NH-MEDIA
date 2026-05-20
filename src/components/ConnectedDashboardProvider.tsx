@@ -1,6 +1,5 @@
 import React from 'react';
-import { User } from 'firebase/auth';
-import { UserProfile } from '../hooks/useAuthLogic';
+import type { User, UserProfile } from '../hooks/useAuthLogic';
 import { DashboardProvider } from '../contexts/DashboardContext';
 import { useUI } from '../contexts/UIContext';
 

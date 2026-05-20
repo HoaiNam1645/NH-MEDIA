@@ -3,8 +3,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useDashboard } from '../contexts/DashboardContext';
-import { db, auth } from '../services/firebaseService';
-import { collection, getDocs, query, where, doc, writeBatch } from 'firebase/firestore';
+import { api } from '../services/apiClient';
 import { Account } from '../types';
 import Spinner from './Spinner';
 
@@ -180,30 +179,31 @@ const UserManager: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const q = query(collection(db, 'user_roles'), where('teamId', '==', teamId));
-      const querySnapshot = await getDocs(q);
-      const userList = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        allowedAccounts: doc.data().allowedAccounts || [],
-      } as UserRole));
-
-      userList.forEach(u => {
-        if (u.role === 'user' && !u.permissions) {
+      const { users: list } = await api.get<{ users: any[] }>('/api/users');
+      const userList: UserRole[] = list.map((u) => ({
+        id: u.id,
+        email: u.email,
+        teamId: teamId,
+        role: (u.role === 'OWNER' ? 'owner' : 'user') as 'owner' | 'user',
+        permissions: (u.permissions as any) || {},
+        allowedAccounts: u.allowedAccounts || [],
+      }));
+      userList.forEach((u) => {
+        if (u.role === 'user' && (!u.permissions || Object.keys(u.permissions).length === 0)) {
           u.permissions = {
             viewSales: false,
             viewFunds: false,
             viewFulfill: false,
-
             canManageSettings: false,
           };
         }
       });
-      setUsers(userList.sort((a, b) => a.role.localeCompare(b.role) || a.email.localeCompare(b.email)));
-
+      setUsers(
+        userList.sort((a, b) => a.role.localeCompare(b.role) || a.email.localeCompare(b.email))
+      );
     } catch (err: any) {
       console.error(err);
-      setError('Failed to load users. Check Firestore rules.');
+      setError(err?.message || 'Failed to load users.');
     }
     setLoading(false);
   }, [teamId]);
@@ -217,30 +217,25 @@ const UserManager: React.FC = () => {
     // Skip initial load or if no changes
     if (users.length === 0) return;
 
-    // Debounce: wait 1.5s after last change
-    const timeoutId = setTimeout(() => {
-      // Auto-save changes
+    const timeoutId = setTimeout(async () => {
       setSaving(true);
-      const batch = writeBatch(db);
-
-      users.forEach(user => {
-        if (user.role === 'user') {
-          const docRef = doc(db, 'user_roles', user.id);
-          batch.update(docRef, {
-            permissions: user.permissions,
-            allowedAccounts: user.allowedAccounts || []
-          });
-        }
-      });
-
-      batch.commit()
-        .catch((err: any) => {
-          console.error(err);
-          setError('Failed to save changes. Check Firestore rules.');
-        })
-        .finally(() => {
-          setSaving(false);
-        });
+      try {
+        await Promise.all(
+          users
+            .filter((u) => u.role === 'user')
+            .map((u) =>
+              api.patch(`/api/users/${u.id}`, {
+                permissions: u.permissions,
+                allowedAccounts: u.allowedAccounts || [],
+              })
+            )
+        );
+      } catch (err: any) {
+        console.error(err);
+        setError(err?.message || 'Failed to save changes.');
+      } finally {
+        setSaving(false);
+      }
     }, 1000);
 
     return () => clearTimeout(timeoutId);
@@ -287,60 +282,26 @@ const UserManager: React.FC = () => {
     setCreateError(null);
 
     try {
-      const idToken = await auth.currentUser!.getIdToken();
-
-      const response = await fetch('/api/users', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${idToken}`,
-        },
-        body: JSON.stringify({
-          email: newUserEmail,
-          password: newUserPassword,
-          role: newUserRole,
-          teamId: teamId,
-        }),
+      await api.post('/api/users', {
+        email: newUserEmail,
+        password: newUserPassword,
+        role: newUserRole === 'owner' ? 'OWNER' : 'USER',
       });
-
-      const result = await response.json();
-      if (!response.ok) {
-        throw new Error(result.message || 'Failed to create user.');
-      }
-
       setNewUserEmail('');
       setNewUserPassword('');
       setNewUserRole('user');
       await fetchUsers();
-
     } catch (err: any) {
       console.error(err);
-      setCreateError(err.message);
+      setCreateError(err?.message || 'Failed to create user.');
     }
     setIsCreating(false);
   };
 
-  // Hàm xóa user
   const handleDeleteUser = async (userId: string) => {
     setDeletingUserId(userId);
     try {
-      const idToken = await auth.currentUser!.getIdToken();
-
-      const response = await fetch('/api/users', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${idToken}`,
-        },
-        body: JSON.stringify({ userId }),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.message || 'Failed to delete user.');
-      }
-
+      await api.delete(`/api/users/${userId}`);
       // Success → Refresh user list
       await fetchUsers();
       setConfirmDeleteUser(null);

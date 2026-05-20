@@ -1,6 +1,5 @@
 import React from 'react';
-import { User } from 'firebase/auth';
-import { UserProfile } from '../hooks/useAuthLogic';
+import type { User, UserProfile } from '../hooks/useAuthLogic';
 
 import { sendLarkLoginNotification } from '../services/notificationService';
 
@@ -18,7 +17,7 @@ const LoginNotificationHandler: React.FC<LoginNotificationHandlerProps> = ({ use
             // Only show notification for user role (owner will see this notification)
             // Notification logic managed via Lark or other channels
 
-            sendLarkLoginNotification(user.email, userProfile.role, userProfile.teamId);
+            sendLarkLoginNotification(user.email, userProfile.role, { teamId: userProfile.teamId });
             hasShownNotification.current = true;
         }
         if (!user) {

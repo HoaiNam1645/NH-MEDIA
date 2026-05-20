@@ -1,64 +1,23 @@
-import { getToken } from "firebase/messaging";
-import { getMessagingInstance, db } from "./firebaseService"; // Thêm db
-import { doc, updateDoc, arrayUnion } from "firebase/firestore"; // Thêm các hàm Firestore
+/**
+ * Notification service — FCM disabled for the MySQL backend.
+ *
+ * After the Firebase migration there is no client-side FCM. When push
+ * notifications become a priority again, swap this for a Web Push API
+ * implementation (subscribe via service worker, post the PushSubscription
+ * to /api/push/subscribe, send notifications from the server with the
+ * `web-push` npm package).
+ */
 
-const VAPID_KEY = import.meta.env.VITE_FIREBASE_VAPID_KEY || "";
-
-// Thêm tham số userId (optional) để biết lưu vào user nào
-export const requestForToken = async (userId?: string) => {
-  try {
-    const messaging = await getMessagingInstance();
-
-    if (!messaging) {
-      console.warn("Firebase Messaging is not supported or failed to initialize.");
-      return null;
-    }
-
-    const permission = await Notification.requestPermission();
-    if (permission === 'granted') {
-      const token = await getToken(messaging, {
-        vapidKey: VAPID_KEY
-      });
-      // --- LOGIC MỚI: Tự động lưu vào DB ---
-      if (userId && token) {
-        try {
-          const userRef = doc(db, 'user_roles', userId);
-          // arrayUnion: Nếu token mới (do cài lại app) -> Thêm vào mảng. Nếu cũ -> Bỏ qua.
-          await updateDoc(userRef, {
-            fcmTokens: arrayUnion(token)
-          });
-        } catch (saveError) {
-          console.error('Error saving token to Firestore:', saveError);
-        }
-      }
-      // -------------------------------------
-
-      return token;
-    } else {
-      console.log('Quyền thông báo bị từ chối.');
-      return null;
-    }
-  } catch (error) {
-    console.error('Lỗi khi lấy token:', error);
-    return null;
-  }
+export const requestForToken = async (_userId?: string) => {
+  return null;
 };
 
 export const sendLarkLoginNotification = (
   email: string | null,
   role: string,
-  teamId?: string
-): void => {
-  if (role !== 'user') {
-    return;
-  }
-  fetch('/api/lark-login-notify', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ email, role, teamId }),
-  }).catch(err => {
-    console.error('Failed to trigger login notification:', err);
-  });
+  _meta?: { teamId?: string; ip?: string; userAgent?: string }
+) => {
+  // Best-effort: just log. The /api/lark-login-notify endpoint can be called
+  // from the auth flow if/when re-enabled.
+  console.info('[notification] login:', email, role);
 };

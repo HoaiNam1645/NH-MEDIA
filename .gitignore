@@ -27,4 +27,8 @@ public/firebase-config.js
 *.sw?
 .vercel
 .env
-.env*.local
+.env.local
+.env.production
+.env.*
+
+/src/generated/prisma

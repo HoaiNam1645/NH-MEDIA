@@ -469,8 +469,26 @@ export const setupGmailWatch = async (teamId: string, account: Account): Promise
     if (account.provider !== 'gmail') {
         return;
     }
+    const topicName = import.meta.env.VITE_GMAIL_PUBSUB_TOPIC;
+    if (!topicName) {
+        // Real-time push disabled (no Pub/Sub topic configured). Quick/Historical
+        // sync still works — they just have to be triggered manually.
+        return;
+    }
     try {
         const accessToken = await getGoogleAccessToken(account);
+
+        // Gmail allows only one push subscription per user per developer. If a
+        // previous app (or a previous deploy of this app pointing at a
+        // different Pub/Sub topic) registered a watch, we have to /stop it
+        // before /watch will succeed.
+        await fetch('https://gmail.googleapis.com/gmail/v1/users/me/stop', {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${accessToken}` },
+        }).catch(() => undefined);
+
+        // Give Gmail a moment to propagate the stop before re-watching.
+        await new Promise((r) => setTimeout(r, 1000));
 
         const watchResponse = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/watch', {
             method: 'POST',
@@ -479,7 +497,7 @@ export const setupGmailWatch = async (teamId: string, account: Account): Promise
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                topicName: 'projects/future-snowfall-467017-q2/topics/gmail-push',
+                topicName,
                 labelIds: ['INBOX'],
                 labelFilterAction: 'INCLUDE',
             }),
@@ -487,6 +505,12 @@ export const setupGmailWatch = async (teamId: string, account: Account): Promise
 
         if (!watchResponse.ok) {
             const errorData = await watchResponse.json();
+            // Silently swallow the "already registered" rate-limit error.
+            // The existing watch is still active, no need to surface it as red.
+            if (/Only one user push notification client/i.test(errorData?.error?.message || '')) {
+                console.warn(`[gmail-watch] Already registered for ${account.email}, skipping.`);
+                return;
+            }
             console.error(`Failed to set .watch() for ${account.email}:`, errorData);
         } else {
             const data = await watchResponse.json();
@@ -494,6 +518,7 @@ export const setupGmailWatch = async (teamId: string, account: Account): Promise
             if (historyId) {
                 await updateAccountsInFirebase(teamId, [{
                     id: account.id,
+                    email: account.email,
                     lastKnownHistoryId: historyId
                 }]);
             }

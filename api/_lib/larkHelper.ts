@@ -1,3 +1,4 @@
+// @ts-nocheck — TODO: migrate Firestore calls to Prisma (see api/_lib/prisma.ts)
 import { getDb } from './firebaseAdminHelper.js';
 import { SHARED_USER_ID } from '../../src/constants.js';
 import type { Account, Record as MailRecord } from './types.js';

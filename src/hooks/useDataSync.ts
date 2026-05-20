@@ -14,12 +14,10 @@ import {
     getRecordsForDateRange,
     getAccountsFromFirebase,
     getManualCosts,
-    db
 } from '../services/firebaseService';
 import { splitDateRange } from '../utils/dateChunking';
-import { collection, query, where, getDocs } from "firebase/firestore";
 import { fetchCostsForRecords } from '../services/fulfillmentService';
-import { User } from 'firebase/auth';
+import type { User } from './useAuthLogic';
 
 interface UseDataSyncProps {
     user: User | null;
@@ -280,8 +278,11 @@ export const useDataSync = ({
         for (let account of accountsToSync) {
             if (signal?.aborted) return;
 
-            // SAFETY CHECK: Abort if account no longer exists
-            if (!allAccountsRef.current.some(a => a.id === account.id)) {
+            // SAFETY CHECK: Abort if account no longer exists.
+            // Match by email as well as id — newly-OAuth-connected accounts hold
+            // the provider's sub id until the next polling refresh swaps it for
+            // the DB cuid, so an id-only check would false-positive here.
+            if (!allAccountsRef.current.some(a => a.id === account.id || a.email === account.email)) {
                 console.log(`Historical Sync: Account ${account.email} was removed. Skipping.`);
                 continue;
             }
@@ -431,10 +432,13 @@ export const useDataSync = ({
                 // Mark initial load as complete
                 initialLoadCompleteRef.current = true;
 
-                // Setup Gmail watch for owner
+                // Setup Gmail watch for owner — only for accounts that don't
+                // yet have a webhook registered (lastKnownHistoryId is null).
+                // Re-registering on every page load triggers Gmail's "only one
+                // push notification client per developer" rate limit.
                 if (role === 'owner') {
                     fbAccounts.forEach(acc => {
-                        if (acc.provider === 'gmail') {
+                        if (acc.provider === 'gmail' && !acc.lastKnownHistoryId) {
                             setupGmailWatch(teamId, acc).catch(err => console.error(`Failed to initialize webhook for ${acc.email}:`, err));
                         }
                     });
@@ -591,14 +595,12 @@ export const useDataSync = ({
                     // Parallel Requests
                     const chunkPromises = chunks.map(async (chunk) => {
                         if (signal.aborted) return [];
-
-                        const q = query(
-                            collection(db, 'user', teamId, 'records'),
-                            where('dt_local', '>=', chunk.start.toISOString()),
-                            where('dt_local', '<', chunk.end.toISOString())
+                        return await getRecordsForDateRange(
+                            teamId,
+                            chunk.start.toISOString(),
+                            chunk.end.toISOString(),
+                            'UTC'
                         );
-                        const snapshot = await getDocs(q);
-                        return snapshot.docs.map(doc => ({ ...(doc.data() as object), id: doc.id } as Record));
                     });
 
                     const results = await Promise.all(chunkPromises);

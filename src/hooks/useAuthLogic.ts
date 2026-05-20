@@ -1,79 +1,90 @@
-import { useState, useEffect } from 'react';
-import { onAuthStateChanged, signOut, type User } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
-import { auth, db } from '../services/firebaseService';
-import { requestForToken } from '../services/notificationService';
+import { useCallback, useEffect, useState } from 'react';
+import { fetchMe, logout as logoutApi, AuthUser } from '../services/authApi';
+
+/**
+ * Backwards-compatible shape used by App.tsx & contexts:
+ *   user        => minimal { uid, email }
+ *   userProfile => { teamId, role: 'owner'|'user' (lowercase), permissions, ... }
+ *
+ * The API returns role in UPPERCASE ('OWNER'|'USER'); we normalize to lowercase
+ * here so the rest of the app doesn't need to change.
+ */
+
+export interface User {
+  uid: string;
+  email: string | null;
+}
 
 export interface UserProfile {
-    teamId: string;
-    role: 'owner' | 'user';
-    permissions: { [key: string]: boolean };
-    allowedAccounts?: string[];
-    email?: string;
-    [key: string]: any;
+  teamId: string;
+  role: 'owner' | 'user';
+  permissions: { [key: string]: boolean };
+  allowedAccounts?: string[];
+  email?: string;
+  [key: string]: any;
+}
+
+function toLegacy(u: AuthUser): { user: User; profile: UserProfile } {
+  return {
+    user: { uid: u.id, email: u.email },
+    profile: {
+      teamId: u.teamId,
+      role: u.role === 'OWNER' ? 'owner' : 'user',
+      permissions: (u.permissions as { [k: string]: boolean }) || {},
+      allowedAccounts: (u.allowedAccounts as string[] | undefined) || undefined,
+      email: u.email,
+    },
+  };
 }
 
 export const useAuthLogic = () => {
-    const [user, setUser] = useState<User | null>(null);
-    const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-    const [authLoading, setAuthLoading] = useState(true);
-    const [authError, setAuthError] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
+  const [authError, setAuthError] = useState<string | null>(null);
 
-    // We can't use useNotification here easily if this hook is used OUTSIDE NotificationProvider
-    // But based on App.tsx structure, Auth check happens before DashboardProvider.
-    // So we'll return the error/state and let the component handle UI.
+  const refresh = useCallback(async () => {
+    setAuthLoading(true);
+    setAuthError(null);
+    try {
+      const me = await fetchMe();
+      if (me) {
+        const { user, profile } = toLegacy(me);
+        setUser(user);
+        setUserProfile(profile);
+      } else {
+        setUser(null);
+        setUserProfile(null);
+      }
+    } catch (err: any) {
+      setAuthError(err?.message || 'Auth check failed');
+      setUser(null);
+      setUserProfile(null);
+    } finally {
+      setAuthLoading(false);
+    }
+  }, []);
 
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-            setAuthLoading(true);
-            setUser(currentUser);
-            setUserProfile(null);
-            setAuthError(null);
+  useEffect(() => {
+    refresh();
+    const onAuthChanged = () => refresh();
+    window.addEventListener('nh:auth-changed', onAuthChanged);
+    return () => window.removeEventListener('nh:auth-changed', onAuthChanged);
+  }, [refresh]);
 
-            if (currentUser) {
-                try {
-                    const roleDocRef = doc(db, "user_roles", currentUser.uid);
-                    const roleDoc = await getDoc(roleDocRef);
+  const logout = useCallback(async () => {
+    logoutApi();
+    setUser(null);
+    setUserProfile(null);
+    window.dispatchEvent(new CustomEvent('nh:auth-changed'));
+  }, []);
 
-                    if (!roleDoc.exists()) {
-                        setAuthError("Tài khoản của bạn không được cấp quyền truy cập.");
-                        await signOut(auth);
-                        setUser(null);
-                    } else {
-                        const profile = roleDoc.data() as UserProfile;
-                        setUserProfile(profile);
-                    }
-                } catch (err) {
-                    console.error("Auth check error:", err);
-                    setAuthError("Lỗi khi kiểm tra quyền truy cập.");
-                    await signOut(auth);
-                    setUser(null);
-                }
-
-                // Request FCM Token
-                requestForToken(currentUser.uid);
-            }
-            setAuthLoading(false);
-        });
-        return () => unsubscribe();
-    }, []);
-
-    const logout = async () => {
-        try {
-            await signOut(auth);
-            setUser(null);
-            setUserProfile(null);
-        } catch (error) {
-            console.error("Logout failed:", error);
-            throw error;
-        }
-    };
-
-    return {
-        user,
-        userProfile,
-        authLoading,
-        authError,
-        logout
-    };
+  return {
+    user,
+    userProfile,
+    authLoading,
+    authError,
+    logout,
+    refresh,
+  };
 };

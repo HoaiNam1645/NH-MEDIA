@@ -8,7 +8,7 @@ import {
 import { exportDashboardToExcel, ExportProgress } from '../utils/excelExport';
 import { setupGmailWatch } from '../services/emailService';
 import { useNotification } from './NotificationContext';
-import { User } from 'firebase/auth';
+import type { User } from '../hooks/useAuthLogic';
 import { useDataSync } from '../hooks/useDataSync';
 import { useRecordFiltering } from '../hooks/useRecordFiltering';
 import { useAutoSync } from '../hooks/useAutoSync';

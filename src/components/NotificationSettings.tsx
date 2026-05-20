@@ -1,12 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
-import { getToken } from 'firebase/messaging';
-import { doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
-import { db } from '../services/firebaseService';
 import { useDashboard } from '../contexts/DashboardContext';
 import { useNotification } from '../contexts/NotificationContext';
-import { getMessagingInstance } from '../services/firebaseService';
-const VAPID_KEY = import.meta.env.VITE_FIREBASE_VAPID_KEY || "";
+
+// Notification prefs are stored in localStorage after the MySQL migration.
+// Re-enable web push by wiring `/api/push/subscribe` and the `web-push` package
+// on the server side.
+const PREFS_KEY = 'nh_notification_prefs';
 
 interface NotificationPrefs {
   order: boolean;
@@ -30,98 +30,47 @@ const NotificationSettings: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!user) return;
-
-    // Load settings from Firestore
-    const loadSettings = async () => {
-      try {
-        const userRef = doc(db, 'user_roles', user.uid);
-        const snapshot = await getDoc(userRef);
-        if (snapshot.exists()) {
-          const data = snapshot.data();
-          if (data.notificationSettings) {
-            setPrefs(data.notificationSettings);
-          }
-        }
-      } catch (err) {
-        console.error("Error loading notification settings", err);
-      }
-    };
-    loadSettings();
-  }, [user]);
+    try {
+      const stored = localStorage.getItem(PREFS_KEY);
+      if (stored) setPrefs(JSON.parse(stored));
+    } catch (err) {
+      console.error('Error loading notification prefs', err);
+    }
+  }, []);
 
   const requestPermission = async () => {
     setLoading(true);
     try {
-      // 1. Lấy instance messaging an toàn
-      const messaging = await getMessagingInstance();
-
-      if (!messaging) {
-        addNotification("Notifications not supported on this device/browser.", "error");
-        setLoading(false);
-        return;
-      }
-
-      // 2. Xin quyền trình duyệt
       const permissionResult = await Notification.requestPermission();
       if (permissionResult !== 'granted') {
-        addNotification("Permission denied. Please enable notifications in browser settings.", "info");
+        addNotification('Permission denied. Please enable notifications in browser settings.', 'info');
         setLoading(false);
         return;
       }
-
-      // 3. Lấy Token
-      const currentToken = await getToken(messaging, { vapidKey: VAPID_KEY });
-
-      if (currentToken) {
-        setPermission('granted');
-
-        const userRef = doc(db, 'user_roles', user.uid);
-        await updateDoc(userRef, {
-          fcmTokens: arrayUnion(currentToken),
-          // Mặc định bật thông báo khi mới đăng ký
-          notificationSettings: {
-            order: true,
-            funds: true,
-            summary: true,
-            login: true,
-            support: true // Enable by default
-          }
-        });
-        // Cập nhật UI state local để phản ánh ngay lập tức
-        setPrefs({ order: true, funds: true, summary: true, login: true, support: true });
-
-        addNotification("Notifications enabled successfully!", "success");
-      } else {
-        addNotification("No registration token available.", "error");
-      }
+      setPermission('granted');
+      const enabled: NotificationPrefs = { order: true, funds: true, summary: true, login: true, support: true };
+      setPrefs(enabled);
+      localStorage.setItem(PREFS_KEY, JSON.stringify(enabled));
+      addNotification('Browser notifications enabled.', 'success');
     } catch (err) {
-      console.error('An error occurred while retrieving token. ', err);
-      addNotification("Failed to enable notifications.", "error");
+      console.error('Failed to request permission', err);
+      addNotification('Failed to enable notifications.', 'error');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleToggle = async (key: keyof NotificationPrefs) => {
+  const handleToggle = (key: keyof NotificationPrefs) => {
     if (permission !== 'granted') {
-      addNotification("Please enable browser notifications first.", "info");
+      addNotification('Please enable browser notifications first.', 'info');
       return;
     }
-
-    const newPrefs = { ...prefs, [key]: !prefs[key] };
-    setPrefs(newPrefs);
-
+    const next = { ...prefs, [key]: !prefs[key] };
+    setPrefs(next);
     try {
-      const userRef = doc(db, 'user_roles', user.uid);
-      await updateDoc(userRef, {
-        notificationSettings: newPrefs
-      });
+      localStorage.setItem(PREFS_KEY, JSON.stringify(next));
     } catch (err) {
-      console.error("Error saving settings", err);
-      // Revert UI on error
-      setPrefs(prefs);
-      addNotification("Failed to save settings.", "error");
+      console.error('Failed to save prefs', err);
     }
   };
 
