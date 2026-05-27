@@ -66,49 +66,58 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return badRequest(res, 'records array is required');
       }
 
+      // Dedupe by emailId so the same email isn't upserted twice in one batch.
+      // Records without an emailId can't be deduped, so keep them all.
+      const seenEmailIds = new Set<string>();
+      const dedupedRecords = records.filter((r: any) => {
+        const emailId = r.email_id ?? r.emailId ?? null;
+        if (!emailId) return true;
+        if (seenEmailIds.has(emailId)) return false;
+        seenEmailIds.add(emailId);
+        return true;
+      });
+
       let upserted = 0;
-      for (const r of records) {
+      for (const r of dedupedRecords) {
         const kindEnum = toEnum(r.kind) ?? 'ORDER';
-        await prisma.record.upsert({
-          where:
-            r.emailId
-              ? { teamId_emailId: { teamId: auth.teamId, emailId: r.emailId } }
+        const emailId = r.email_id ?? r.emailId ?? null;
+        const fields = {
+          dtLocal: parseDate(r.dt_local || r.dtLocal) ?? new Date(),
+          amount: r.amount ?? 0,
+          orderId: r.order_id ?? r.orderId ?? null,
+          currency: r.currency ?? null,
+          source: r.source ?? null,
+          accountEmail: r.account ?? r.accountEmail ?? null,
+          accountId: r.accountId ?? null,
+          kind: kindEnum,
+          caseMsg: r.case_msg ?? r.caseMsg ?? null,
+          helpKind: r.help_kind ?? r.helpKind ?? null,
+          costTotal: r.cost_total ?? r.costTotal ?? null,
+          ffCode: r.ff_code ?? r.ffCode ?? null,
+          productName: r.product_name ?? r.productName ?? null,
+          details: r.details ?? undefined,
+        };
+        try {
+          await prisma.record.upsert({
+            where: emailId
+              ? { teamId_emailId: { teamId: auth.teamId, emailId } }
               : { id: r.id || '__never__' },
-          update: {
-            dtLocal: parseDate(r.dt_local || r.dtLocal) ?? new Date(),
-            amount: r.amount ?? 0,
-            orderId: r.order_id ?? r.orderId ?? null,
-            currency: r.currency ?? null,
-            source: r.source ?? null,
-            accountEmail: r.account ?? r.accountEmail ?? null,
-            accountId: r.accountId ?? null,
-            kind: kindEnum,
-            caseMsg: r.case_msg ?? r.caseMsg ?? null,
-            helpKind: r.help_kind ?? r.helpKind ?? null,
-            costTotal: r.cost_total ?? r.costTotal ?? null,
-            ffCode: r.ff_code ?? r.ffCode ?? null,
-            productName: r.product_name ?? r.productName ?? null,
-            details: r.details ?? undefined,
-          },
-          create: {
-            teamId: auth.teamId,
-            emailId: r.email_id ?? r.emailId ?? null,
-            dtLocal: parseDate(r.dt_local || r.dtLocal) ?? new Date(),
-            amount: r.amount ?? 0,
-            orderId: r.order_id ?? r.orderId ?? null,
-            currency: r.currency ?? null,
-            source: r.source ?? null,
-            accountEmail: r.account ?? r.accountEmail ?? null,
-            accountId: r.accountId ?? null,
-            kind: kindEnum,
-            caseMsg: r.case_msg ?? r.caseMsg ?? null,
-            helpKind: r.help_kind ?? r.helpKind ?? null,
-            costTotal: r.cost_total ?? r.costTotal ?? null,
-            ffCode: r.ff_code ?? r.ffCode ?? null,
-            productName: r.product_name ?? r.productName ?? null,
-            details: r.details ?? undefined,
-          },
-        });
+            update: fields,
+            create: { teamId: auth.teamId, emailId, ...fields },
+          });
+        } catch (e: any) {
+          // P2002 = unique constraint race: a concurrent sync request inserted
+          // this (teamId, emailId) between our SELECT and INSERT. Fall back to
+          // an update so the batch still succeeds.
+          if (e?.code === 'P2002' && emailId) {
+            await prisma.record.update({
+              where: { teamId_emailId: { teamId: auth.teamId, emailId } },
+              data: fields,
+            });
+          } else {
+            throw e;
+          }
+        }
         upserted++;
       }
 

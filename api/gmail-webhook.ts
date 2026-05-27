@@ -195,36 +195,46 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     // 4. Persist records (idempotent on teamId+emailId)
-    if (newRecords.length > 0) {
-      await Promise.all(
-        newRecords.map((r) =>
-          prisma.record.upsert({
-            where: { teamId_emailId: { teamId, emailId: r.emailId } },
-            update: {
-              dtLocal: r.dtLocal,
-              amount: r.amount,
-              orderId: r.orderId,
-              currency: r.currency,
-              source: r.source,
-              accountEmail: r.accountEmail,
-              accountId: account.id,
-              kind: r.kind,
-              caseMsg: r.caseMsg,
-              helpKind: r.helpKind,
-              costTotal: r.costTotal,
-              ffCode: r.ffCode,
-              productName: r.productName,
-              details: r.details,
-            },
-            create: {
-              teamId,
-              accountId: account.id,
-              ...r,
-            },
-          })
-        )
-      );
-      console.log(`[gmail-webhook] Persisted ${newRecords.length} records for ${userEmail}`);
+    // Dedupe by emailId first — multiple records with the same emailId in one
+    // batch would race each other inside the upsert and trip the
+    // Record_teamId_emailId unique constraint. Keep the last occurrence.
+    const recordsByEmailId = new Map<string, (typeof newRecords)[number]>();
+    for (const r of newRecords) {
+      if (!r.emailId) continue; // skip records without an emailId (can't dedupe/upsert on it)
+      recordsByEmailId.set(r.emailId, r);
+    }
+    const dedupedRecords = Array.from(recordsByEmailId.values());
+
+    if (dedupedRecords.length > 0) {
+      // Sequential (not Promise.all) so each upsert's SELECT-then-INSERT can't
+      // race a sibling inserting the same key.
+      for (const r of dedupedRecords) {
+        await prisma.record.upsert({
+          where: { teamId_emailId: { teamId, emailId: r.emailId } },
+          update: {
+            dtLocal: r.dtLocal,
+            amount: r.amount,
+            orderId: r.orderId,
+            currency: r.currency,
+            source: r.source,
+            accountEmail: r.accountEmail,
+            accountId: account.id,
+            kind: r.kind,
+            caseMsg: r.caseMsg,
+            helpKind: r.helpKind,
+            costTotal: r.costTotal,
+            ffCode: r.ffCode,
+            productName: r.productName,
+            details: r.details,
+          },
+          create: {
+            teamId,
+            accountId: account.id,
+            ...r,
+          },
+        });
+      }
+      console.log(`[gmail-webhook] Persisted ${dedupedRecords.length} records for ${userEmail}`);
     }
 
     // 5. Advance the history cursor
