@@ -13,3 +13,11 @@ interface ImportMetaEnv {
 interface ImportMeta {
     readonly env: ImportMetaEnv
 }
+
+// Allow the non-standard folder-selection attributes on <input>.
+declare namespace React {
+    interface InputHTMLAttributes<T> {
+        webkitdirectory?: string
+        directory?: string
+    }
+}

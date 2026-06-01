@@ -21,6 +21,8 @@ model Team {
   records       Record[]
   manualCosts   ManualCost[]
   notifications Notification[]
+  products      Product[]
+  categories    Category[]
 }
 
 enum Role {
@@ -145,6 +147,52 @@ model Notification {
   team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
 
   @@index([teamId, createdAt])
+}
+
+// ============ PRODUCTS (upload + listing) ============
+
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  teamId    String
+  name      String
+  slug      String
+  createdAt DateTime @default(now())
+
+  team     Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  products Product[]
+
+  @@unique([teamId, slug])
+  @@index([teamId])
+}
+
+model Product {
+  id          String        @id @default(cuid())
+  teamId       String
+  categoryId   String?
+  title        String?      @db.Text
+  listingTitle String?      @db.Text
+  price        Decimal?     @db.Decimal(18, 2)
+  currency    String?       @db.VarChar(8)
+  description String?       @db.Text
+  images      Json?         // array of { url, publicId, source } from Cloudinary
+  status      ProductStatus @default(DRAFT)
+  source      String?       // 'local' | 'drive'
+  createdById String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  team     Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  @@index([teamId, createdAt])
+  @@index([teamId, status])
+  @@index([teamId, categoryId])
 }
 
 // ============ APP-WIDE SETTINGS ============

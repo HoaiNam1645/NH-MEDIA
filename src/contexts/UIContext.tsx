@@ -21,6 +21,8 @@ interface UIContextType {
     setIsAccountManagerOpen: React.Dispatch<React.SetStateAction<boolean>>;
     isTabSettingsOpen: boolean;
     setIsTabSettingsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    isProductManagerOpen: boolean;
+    setIsProductManagerOpen: React.Dispatch<React.SetStateAction<boolean>>;
     isNotificationDetailOpen: boolean;
     setIsNotificationDetailOpen: React.Dispatch<React.SetStateAction<boolean>>;
     selectedNotificationId: string | null;
@@ -148,6 +150,7 @@ export const UIProvider: React.FC<{ children: React.ReactNode; userUid?: string;
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isAccountManagerOpen, setIsAccountManagerOpen] = useState(false);
     const [isTabSettingsOpen, setIsTabSettingsOpen] = useState(false);
+    const [isProductManagerOpen, setIsProductManagerOpen] = useState(false);
     const [isNotificationDetailOpen, setIsNotificationDetailOpen] = useState(false);
     const [selectedNotificationId, setSelectedNotificationId] = useState<string | null>(null);
 
@@ -200,6 +203,7 @@ export const UIProvider: React.FC<{ children: React.ReactNode; userUid?: string;
             isMobileMenuOpen, setIsMobileMenuOpen, toggleMobileMenu,
             isAccountManagerOpen, setIsAccountManagerOpen,
             isTabSettingsOpen, setIsTabSettingsOpen,
+            isProductManagerOpen, setIsProductManagerOpen,
             isNotificationDetailOpen, setIsNotificationDetailOpen,
             selectedNotificationId, setSelectedNotificationId,
             activeTab, setActiveTab,

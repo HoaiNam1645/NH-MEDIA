@@ -18,8 +18,9 @@ const apiDir = path.join(__dirname, 'api');
 const staticDir = path.join(__dirname, 'dist');
 
 const app = express();
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+// Large limit: image uploads send base64 data URIs which inflate ~33%.
+app.use(express.json({ limit: '1gb' }));
+app.use(express.urlencoded({ extended: true, limit: '1gb' }));
 
 // Body-parse safety: Vercel handlers may expect req.body for POST/PUT.
 // express.json() handles it for application/json; raw bodies are passed through.

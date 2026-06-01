@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useDashboard } from '../contexts/DashboardContext';
 import { useUI } from '../contexts/UIContext';
 
@@ -17,6 +18,7 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar }) => {
+    const navigate = useNavigate();
     const { role, permissions, handleLogout } = useDashboard();
     const {
         activeTab,
@@ -129,6 +131,33 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar }) => {
             </nav>
 
             <div className={`border-t border-gray-200 dark:border-gray-700 space-y-2 ${isCollapsed ? 'p-2' : 'p-4'}`}>
+                <button
+                    onClick={() => navigate('/products')}
+                    className={`
+                    w-full flex items-center py-2.5 rounded-lg transition-colors group relative
+                    ${isCollapsed ? 'justify-center px-0' : 'px-3'}
+                    text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-200
+                `}
+                    title={isCollapsed ? "Products" : undefined}
+                >
+                    <div className="flex-shrink-0">
+                        <TagIcon className="h-5 w-5" />
+                    </div>
+                    <span
+                        className={`
+                      font-medium text-sm whitespace-nowrap overflow-hidden transition-all duration-300
+                      ${isCollapsed ? 'opacity-0 max-w-0 ml-0' : 'opacity-100 max-w-[150px] ml-3'}
+                    `}
+                    >
+                        Products Upload
+                    </span>
+                    {isCollapsed && (
+                        <div className="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 shadow-lg">
+                            Products Upload
+                        </div>
+                    )}
+                </button>
+
                 <button
                     onClick={() => setIsTabSettingsOpen(true)}
                     className={`

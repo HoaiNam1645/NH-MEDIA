@@ -20,6 +20,7 @@ import Sidebar from './components/Sidebar';
 import AccountManager from './components/AccountManager';
 import OrderDetailModal from './components/OrderDetailModal';
 import TabSettings from './components/TabSettings';
+import ProductManager from './components/ProductManager';
 import BottomNav from './components/BottomNav';
 import InstallPrompt from './components/InstallPrompt';
 
@@ -220,6 +221,7 @@ const DashboardLayout: React.FC = () => {
             {isTabSettingsOpen && (
                 <TabSettings />
             )}
+            <ProductManager />
             {selectedOrder && (
                 <OrderDetailModal record={selectedOrder} onClose={closeOrderDetail} />
             )}
