@@ -1,0 +1,21 @@
+{
+  "categoryId": "12193",
+  "productName": "Acrylic Blocks",
+  "variants": [
+    {
+      "option1": "4x4 inch",
+      "price": 99
+    },
+    {
+      "option1": "4x6 inch",
+      "price": 119
+    },
+    {
+      "option1": "5x7 inch",
+      "price": 139
+    }
+  ],
+  "availableConfigs": [
+    "CUSTOM"
+  ]
+}

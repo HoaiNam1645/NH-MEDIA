@@ -1,0 +1,19 @@
+{
+  "categoryId": "10601",
+  "productName": "Wiskey Glass",
+  "variants": [
+    {
+      "option1": "2-Pack",
+      "option2": "Clear",
+      "price": 99
+    },
+    {
+      "option1": "4-Pack",
+      "option2": "Clear",
+      "price": 149
+    }
+  ],
+  "availableConfigs": [
+    "PACK_CUSTOM"
+  ]
+}

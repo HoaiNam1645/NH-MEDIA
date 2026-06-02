@@ -20,6 +20,7 @@ import {
   deleteCategory,
 } from '../services/categoryService';
 import ImagePreviewModal from './ImagePreviewModal';
+import TemuExportModal from './TemuExportModal';
 
 const PAGE_SIZE = 20;
 const UPLOAD_CHUNK = 4; // images per upload request (keeps payload under server limit)
@@ -72,6 +73,11 @@ const DriveIcon = ({ className = 'h-5 w-5' }: IconProps) => (
     <path fill="#4285F4" d="M6 38l8-14h28l-8 14z" />
     <path fill="#34A853" d="M30 10H18l-12 21 6 7z" opacity=".75" />
     <path fill="#FBBC04" d="M42 24L30 10H18l14 24z" opacity=".75" />
+  </svg>
+);
+const ExportIcon = ({ className = 'h-4 w-4' }: IconProps) => (
+  <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
   </svg>
 );
 
@@ -210,6 +216,7 @@ const FoldersView: React.FC<{ categoryId: string; navigate: (to: string) => void
   const [newFolder, setNewFolder] = useState('');
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showExportModal, setShowExportModal] = useState(false);
 
   const apiCategoryId = categoryId === 'uncategorized' ? 'none' : categoryId;
 
@@ -260,6 +267,14 @@ const FoldersView: React.FC<{ categoryId: string; navigate: (to: string) => void
           <button onClick={create} disabled={creating || !newFolder.trim()} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 disabled:opacity-50">
             <FolderPlusIcon /> {creating ? 'Creating…' : 'New Folder'}
           </button>
+          <button
+            onClick={() => setShowExportModal(true)}
+            disabled={total === 0}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
+            title="Export to Temu"
+          >
+            <ExportIcon /> Export Temu
+          </button>
         </div>
 
         <div>
@@ -295,6 +310,13 @@ const FoldersView: React.FC<{ categoryId: string; navigate: (to: string) => void
           )}
         </div>
       </div>
+
+      <TemuExportModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        categoryId={categoryId}
+        categoryName={categoryName}
+      />
     </>
   );
 };

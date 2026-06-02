@@ -1,0 +1,18 @@
+{
+  "categoryId": "12141",
+  "productName": "Ornament",
+  "variants": [
+    {
+      "option1": "Round 3 inch",
+      "price": 79
+    },
+    {
+      "option1": "Round 4 inch",
+      "price": 89
+    }
+  ],
+  "availableConfigs": [
+    "NORMAL",
+    "CUSTOM"
+  ]
+}

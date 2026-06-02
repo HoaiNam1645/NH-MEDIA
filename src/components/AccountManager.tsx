@@ -189,7 +189,10 @@ const MailManager: React.FC = () => {
         platforms: ['etsy', 'ebay'], // Default to both
       };
 
-      if (!localAccounts.find(acc => acc.id === newAccountWithFlag.id)) {
+      const existingAccount = localAccounts.find(acc => acc.email === newAccountWithFlag.email);
+
+      if (!existingAccount) {
+        // New account - add to list
         const updatedAccounts = [...localAccounts, newAccountWithFlag];
         setLocalAccounts(updatedAccounts);
 
@@ -202,7 +205,21 @@ const MailManager: React.FC = () => {
 
         addNotification("Account added and saved successfully.", "success");
       } else {
-        addNotification("This account is already in the list.", "info");
+        // Account exists - update token (reconnect)
+        const updatedAccounts = localAccounts.map(acc =>
+          acc.email === newAccountWithFlag.email
+            ? { ...acc, token: newAccountWithFlag.token, id: newAccountWithFlag.id }
+            : acc
+        );
+        setLocalAccounts(updatedAccounts);
+
+        const orderedAccounts = updatedAccounts.map((acc, index) => ({
+          ...acc,
+          order: index
+        }));
+        await handleSaveAccounts(orderedAccounts);
+
+        addNotification("Account reconnected! Token refreshed.", "success");
       }
     } catch (error) {
       console.error(`Authentication error for ${provider}:`, error);

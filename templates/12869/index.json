@@ -1,0 +1,25 @@
+{
+  "categoryId": "12869",
+  "productName": "Poster",
+  "variants": [
+    {
+      "option1": "12x16 inch",
+      "price": 89
+    },
+    {
+      "option1": "16x20 inch",
+      "price": 109
+    },
+    {
+      "option1": "18x24 inch",
+      "price": 129
+    },
+    {
+      "option1": "24x36 inch",
+      "price": 159
+    }
+  ],
+  "availableConfigs": [
+    "CUSTOM"
+  ]
+}

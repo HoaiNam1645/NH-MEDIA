@@ -1,0 +1,72 @@
+{
+  "categoryId": "10585",
+  "productName": "Mugs",
+  "variants": [
+    {
+      "option1": "White",
+      "option2": "11OZ",
+      "price": 105
+    },
+    {
+      "option1": "Black",
+      "option2": "11OZ",
+      "price": 105
+    },
+    {
+      "option1": "Pink",
+      "option2": "11OZ",
+      "price": 105
+    },
+    {
+      "option1": "Red",
+      "option2": "11OZ",
+      "price": 105
+    },
+    {
+      "option1": "Light Blue",
+      "option2": "11OZ",
+      "price": 105
+    },
+    {
+      "option1": "Yellow",
+      "option2": "11OZ",
+      "price": 105
+    },
+    {
+      "option1": "White",
+      "option2": "15OZ",
+      "price": 110
+    },
+    {
+      "option1": "Black",
+      "option2": "15OZ",
+      "price": 110
+    },
+    {
+      "option1": "Pink",
+      "option2": "15OZ",
+      "price": 110
+    },
+    {
+      "option1": "Red",
+      "option2": "15OZ",
+      "price": 110
+    },
+    {
+      "option1": "Light Blue",
+      "option2": "15OZ",
+      "price": 110
+    },
+    {
+      "option1": "Yellow",
+      "option2": "15OZ",
+      "price": 110
+    }
+  ],
+  "availableConfigs": [
+    "NORMAL",
+    "CUSTOM",
+    "PACK",
+    "PACK_CUSTOM"
+  ]
+}

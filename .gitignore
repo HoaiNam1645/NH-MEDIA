@@ -32,3 +32,6 @@ public/firebase-config.js
 .env.*
 
 /src/generated/prisma
+
+# Local temporary files
+_local/

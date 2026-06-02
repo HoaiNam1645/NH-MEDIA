@@ -1,0 +1,17 @@
+{
+  "categoryId": "11666",
+  "productName": "Banners",
+  "variants": [
+    {
+      "option1": "2x4ft",
+      "price": 149
+    },
+    {
+      "option1": "3x6ft",
+      "price": 199
+    }
+  ],
+  "availableConfigs": [
+    "NORMAL"
+  ]
+}

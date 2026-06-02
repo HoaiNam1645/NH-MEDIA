@@ -1,0 +1,17 @@
+{
+  "categoryId": "11459",
+  "productName": "Table Runner",
+  "variants": [
+    {
+      "option1": "14x72 inch",
+      "price": 159
+    },
+    {
+      "option1": "14x108 inch",
+      "price": 189
+    }
+  ],
+  "availableConfigs": [
+    "CUSTOM"
+  ]
+}

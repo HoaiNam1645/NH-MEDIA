@@ -1,0 +1,29 @@
+{
+  "categoryId": "24376",
+  "productName": "Phone Case",
+  "variants": [
+    {
+      "option1": "iPhone 14",
+      "price": 99
+    },
+    {
+      "option1": "iPhone 15",
+      "price": 99
+    },
+    {
+      "option1": "iPhone 15 Pro",
+      "price": 109
+    },
+    {
+      "option1": "Samsung S23",
+      "price": 99
+    },
+    {
+      "option1": "Samsung S24",
+      "price": 99
+    }
+  ],
+  "availableConfigs": [
+    "CUSTOM"
+  ]
+}

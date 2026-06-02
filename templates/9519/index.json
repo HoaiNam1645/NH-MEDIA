@@ -1,0 +1,17 @@
+{
+  "categoryId": "9519",
+  "productName": "Egg-Cups",
+  "variants": [
+    {
+      "option1": "2-Pack",
+      "price": 89
+    },
+    {
+      "option1": "4-Pack",
+      "price": 109
+    }
+  ],
+  "availableConfigs": [
+    "PACK_CUSTOM"
+  ]
+}

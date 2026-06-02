@@ -1,0 +1,18 @@
+{
+  "categoryId": "24675",
+  "productName": "Flag",
+  "variants": [
+    {
+      "option1": "3x5 ft",
+      "price": 99
+    },
+    {
+      "option1": "4x6 ft",
+      "price": 129
+    }
+  ],
+  "availableConfigs": [
+    "NORMAL",
+    "CUSTOM"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "categoryId": "12253",
+  "productName": "Doormat",
+  "variants": [
+    {
+      "option1": "18x30 inch",
+      "price": 129
+    },
+    {
+      "option1": "24x36 inch",
+      "price": 169
+    }
+  ],
+  "availableConfigs": [
+    "NORMAL",
+    "CUSTOM",
+    "PACK_CUSTOM"
+  ]
+}

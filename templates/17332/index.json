@@ -1,0 +1,17 @@
+{
+  "categoryId": "17332",
+  "productName": "Wrapping Paper",
+  "variants": [
+    {
+      "option1": "3 sheets",
+      "price": 79
+    },
+    {
+      "option1": "5 sheets",
+      "price": 109
+    }
+  ],
+  "availableConfigs": [
+    "NORMAL"
+  ]
+}

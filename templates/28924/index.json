@@ -1,0 +1,21 @@
+{
+  "categoryId": "28924",
+  "productName": "Graduation Stole",
+  "variants": [
+    {
+      "option1": "Gold",
+      "price": 109
+    },
+    {
+      "option1": "Silver",
+      "price": 109
+    },
+    {
+      "option1": "Blue",
+      "price": 109
+    }
+  ],
+  "availableConfigs": [
+    "CUSTOM"
+  ]
+}

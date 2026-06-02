@@ -1,0 +1,25 @@
+{
+  "categoryId": "29007",
+  "productName": "Bikini",
+  "variants": [
+    {
+      "option1": "S",
+      "price": 149
+    },
+    {
+      "option1": "M",
+      "price": 149
+    },
+    {
+      "option1": "L",
+      "price": 149
+    },
+    {
+      "option1": "XL",
+      "price": 149
+    }
+  ],
+  "availableConfigs": [
+    "CUSTOM"
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "categoryId": "22120",
+  "productName": "Car Visor Clip",
+  "variants": [
+    {
+      "option1": "2-Pack",
+      "option2": "Square",
+      "price": 89
+    },
+    {
+      "option1": "2-Pack",
+      "option2": "Round",
+      "price": 89
+    },
+    {
+      "option1": "4-Pack",
+      "option2": "Square",
+      "price": 129
+    },
+    {
+      "option1": "4-Pack",
+      "option2": "Round",
+      "price": 129
+    }
+  ],
+  "availableConfigs": [
+    "PACK",
+    "PACK_CUSTOM"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "categoryId": "13018",
+  "productName": "Wooden Block",
+  "variants": [
+    {
+      "option1": "Small",
+      "price": 99
+    },
+    {
+      "option1": "Large",
+      "price": 129
+    }
+  ],
+  "availableConfigs": [
+    "NORMAL"
+  ]
+}

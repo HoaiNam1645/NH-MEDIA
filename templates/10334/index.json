@@ -1,0 +1,40 @@
+{
+  "categoryId": "10334",
+  "productName": "Tumblers",
+  "variants": [
+    {
+      "option1": "White",
+      "option2": "20OZ",
+      "price": 135
+    },
+    {
+      "option1": "Black",
+      "option2": "20OZ",
+      "price": 135
+    },
+    {
+      "option1": "Pink",
+      "option2": "20OZ",
+      "price": 135
+    },
+    {
+      "option1": "White",
+      "option2": "30OZ",
+      "price": 145
+    },
+    {
+      "option1": "Black",
+      "option2": "30OZ",
+      "price": 145
+    },
+    {
+      "option1": "Pink",
+      "option2": "30OZ",
+      "price": 145
+    }
+  ],
+  "availableConfigs": [
+    "CUSTOM",
+    "PACK_CUSTOM"
+  ]
+}

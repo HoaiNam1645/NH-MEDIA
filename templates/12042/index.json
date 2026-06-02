@@ -1,0 +1,21 @@
+{
+  "categoryId": "12042",
+  "productName": "Pillow",
+  "variants": [
+    {
+      "option1": "14x14 inch",
+      "price": 99
+    },
+    {
+      "option1": "18x18 inch",
+      "price": 119
+    },
+    {
+      "option1": "20x20 inch",
+      "price": 129
+    }
+  ],
+  "availableConfigs": [
+    "CUSTOM"
+  ]
+}
