@@ -10,7 +10,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const { categoryId } = req.query;
 
   if (!categoryId || typeof categoryId !== 'string') {
-    return res.status(400).json({ error: 'categoryId is required' });
+    return res.status(400).json({ error: 'categoryId query parameter is required' });
   }
 
   try {

@@ -100,7 +100,7 @@ const TemuExportModal: React.FC<TemuExportModalProps> = ({
     if (!temuCategoryId) return;
 
     setLoadingDescription(true);
-    fetch(`/api/templates/${temuCategoryId}/index`)
+    fetch(`/api/templates?categoryId=${temuCategoryId}`)
       .then(res => res.ok ? res.json() : null)
       .then(data => {
         const desc = data?.description || '';
