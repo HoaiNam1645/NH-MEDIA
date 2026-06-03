@@ -51,6 +51,7 @@ const TEMU_CATEGORIES: TemuCategory[] = [
   { categoryId: '30152', productName: 'Cap', configs: ['CUSTOM'] },
   { categoryId: '30471', productName: 'Hawaiian Shirt', configs: ['CUSTOM'] },
   { categoryId: '40381', productName: 'Booktracker', configs: ['CUSTOM'] },
+  { categoryId: '12141WH', productName: 'Window Hanging', configs: ['NORMAL', 'CUSTOM'] },
 ];
 
 interface Variant {

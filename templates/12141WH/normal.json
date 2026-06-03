@@ -1,0 +1,29 @@
+{
+  "start_row": 5,
+  "fixed_columns": {
+    "E": "12141",
+    "F": "Home & Kitchen / Home Décor Products / Home Décor Accents / Hanging Ornaments",
+    "G": "Normal product",
+    "L": "{product_name}",
+    "T": "{product_description}",
+    "N": "{sku}",
+    "O": "Add",
+    "P": "🎄 Festive & Meaningful Gift: Perfect for Christmas, Valentine's, birthdays, or any special occasion – makes every moment extra special!",
+    "CD": "Use Without Electricity",
+    "DU": "{option1}",
+    "DS": "Size",
+    "ES": "{price}",
+    "ER": "200",
+    "EV": "0.5",
+    "EW": "18",
+    "EX": "18",
+    "EY": "5",
+    "FK": "Shipping WDHG",
+    "FO": "Vietnam",
+    "HP": "No Warning Applicable"
+  },
+  "images": {
+    "start_col": "EG",
+    "end_col": "EP"
+  }
+}
