@@ -39,3 +39,4 @@ _local/
 ~$*
 *.xlsx
 !templates/**/*.xlsx
+docs/
