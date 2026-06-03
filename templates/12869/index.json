@@ -2,24 +2,16 @@
   "categoryId": "12869",
   "productName": "Poster",
   "variants": [
-    {
-      "option1": "12x16 inch",
-      "price": 89
-    },
-    {
-      "option1": "16x20 inch",
-      "price": 109
-    },
-    {
-      "option1": "18x24 inch",
-      "price": 129
-    },
-    {
-      "option1": "24x36 inch",
-      "price": 159
-    }
+    { "option1": "8x12", "price": 100 },
+    { "option1": "11x17", "price": 122 },
+    { "option1": "12x18", "price": 125 },
+    { "option1": "16x16", "price": 127 },
+    { "option1": "16x24", "price": 130 },
+    { "option1": "18x24", "price": 133 },
+    { "option1": "24x24", "price": 191 },
+    { "option1": "24x36", "price": 202 },
+    { "option1": "30x30", "price": 255 },
+    { "option1": "32x48", "price": 305 }
   ],
-  "availableConfigs": [
-    "CUSTOM"
-  ]
+  "availableConfigs": ["CUSTOM"]
 }

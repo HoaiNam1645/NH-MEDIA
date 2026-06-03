@@ -2,16 +2,9 @@
   "categoryId": "17332",
   "productName": "Wrapping Paper",
   "variants": [
-    {
-      "option1": "3 sheets",
-      "price": 79
-    },
-    {
-      "option1": "5 sheets",
-      "price": 109
-    }
+    { "option1": "30 x 60 inch", "price": 71.50 },
+    { "option1": "30 x 72 inch", "price": 82.30 },
+    { "option1": "30 x 180 inch", "price": 121.30 }
   ],
-  "availableConfigs": [
-    "NORMAL"
-  ]
+  "availableConfigs": ["NORMAL"]
 }

@@ -2,16 +2,16 @@
   "categoryId": "11459",
   "productName": "Table Runner",
   "variants": [
-    {
-      "option1": "14x72 inch",
-      "price": 159
-    },
-    {
-      "option1": "14x108 inch",
-      "price": 189
-    }
+    { "option1": "8x12", "price": 100 },
+    { "option1": "11x17", "price": 122 },
+    { "option1": "12x18", "price": 125 },
+    { "option1": "16x16", "price": 127 },
+    { "option1": "16x24", "price": 130 },
+    { "option1": "18x24", "price": 133 },
+    { "option1": "24x24", "price": 191 },
+    { "option1": "24x36", "price": 202 },
+    { "option1": "30x30", "price": 255 },
+    { "option1": "32x48", "price": 305 }
   ],
-  "availableConfigs": [
-    "CUSTOM"
-  ]
+  "availableConfigs": ["CUSTOM"]
 }

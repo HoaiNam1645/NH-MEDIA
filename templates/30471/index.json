@@ -2,32 +2,13 @@
   "categoryId": "30471",
   "productName": "Hawaiian Shirt",
   "variants": [
-    {
-      "option1": "S",
-      "price": 159
-    },
-    {
-      "option1": "M",
-      "price": 159
-    },
-    {
-      "option1": "L",
-      "price": 159
-    },
-    {
-      "option1": "XL",
-      "price": 159
-    },
-    {
-      "option1": "2XL",
-      "price": 169
-    },
-    {
-      "option1": "3XL",
-      "price": 169
-    }
+    { "option1": "Multicolor", "option2": "XS", "price": 183 },
+    { "option1": "Multicolor", "option2": "S", "price": 183 },
+    { "option1": "Multicolor", "option2": "M", "price": 183 },
+    { "option1": "Multicolor", "option2": "L", "price": 183 },
+    { "option1": "Multicolor", "option2": "XL", "price": 183 },
+    { "option1": "Multicolor", "option2": "XXL", "price": 183 },
+    { "option1": "Multicolor", "option2": "XXXL", "price": 183 }
   ],
-  "availableConfigs": [
-    "CUSTOM"
-  ]
+  "availableConfigs": ["CUSTOM"]
 }

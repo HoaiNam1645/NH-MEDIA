@@ -2,17 +2,14 @@
   "categoryId": "12141",
   "productName": "Ornament",
   "variants": [
-    {
-      "option1": "Round 3 inch",
-      "price": 79
-    },
-    {
-      "option1": "Round 4 inch",
-      "price": 89
-    }
+    { "option1": "pack 1", "option2": "3.5 x 3.5 inch", "price": 66.66 },
+    { "option1": "pack 3", "option2": "3.5 x 3.5 inch", "price": 166.66 },
+    { "option1": "pack 5", "option2": "3.5 x 3.5 inch", "price": 277.77 },
+    { "option1": "pack 10", "option2": "3.5 x 3.5 inch", "price": 477.77 },
+    { "option1": "pack 1", "option2": "4.5 x 4.5 inch", "price": 77.77 },
+    { "option1": "pack 3", "option2": "4.5 x 4.5 inch", "price": 183.33 },
+    { "option1": "pack 5", "option2": "4.5 x 4.5 inch", "price": 294.44 },
+    { "option1": "pack 10", "option2": "4.5 x 4.5 inch", "price": 522.22 }
   ],
-  "availableConfigs": [
-    "NORMAL",
-    "CUSTOM"
-  ]
+  "availableConfigs": ["NORMAL", "CUSTOM"]
 }

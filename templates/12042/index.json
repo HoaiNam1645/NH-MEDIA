@@ -2,20 +2,14 @@
   "categoryId": "12042",
   "productName": "Pillow",
   "variants": [
-    {
-      "option1": "14x14 inch",
-      "price": 99
-    },
-    {
-      "option1": "18x18 inch",
-      "price": 119
-    },
-    {
-      "option1": "20x20 inch",
-      "price": 129
-    }
+    { "option1": "10inch", "price": 176 },
+    { "option1": "12inch", "price": 198 },
+    { "option1": "14inch", "price": 204 },
+    { "option1": "16inch", "price": 220 },
+    { "option1": "18inch", "price": 229 },
+    { "option1": "20inch", "price": 256 },
+    { "option1": "22inch", "price": 267 },
+    { "option1": "24inch", "price": 289 }
   ],
-  "availableConfigs": [
-    "CUSTOM"
-  ]
+  "availableConfigs": ["CUSTOM"]
 }
