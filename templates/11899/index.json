@@ -2,21 +2,10 @@
   "categoryId": "11899",
   "productName": "Blanket",
   "variants": [
-    {
-      "option1": "30x40 inch",
-      "price": 139
-    },
-    {
-      "option1": "50x60 inch",
-      "price": 169
-    },
-    {
-      "option1": "60x80 inch",
-      "price": 199
-    }
+    { "option1": "30 x 40 inch", "price": 127.72 },
+    { "option1": "40 x 50 inch", "price": 183.27 },
+    { "option1": "51 x 60 inch", "price": 216.61 },
+    { "option1": "60 x 80 inch", "price": 255.5 }
   ],
-  "availableConfigs": [
-    "NORMAL",
-    "CUSTOM"
-  ]
+  "availableConfigs": ["NORMAL", "CUSTOM"]
 }

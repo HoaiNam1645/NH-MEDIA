@@ -2,20 +2,32 @@
   "categoryId": "28924",
   "productName": "Graduation Stole",
   "variants": [
-    {
-      "option1": "Gold",
-      "price": 109
-    },
-    {
-      "option1": "Silver",
-      "price": 109
-    },
-    {
-      "option1": "Blue",
-      "price": 109
-    }
+    { "option1": "Red", "option2": "5x78inch-Flat Ends", "price": 158.33 },
+    { "option1": "Red", "option2": "5x78inch-Pointed Ends", "price": 158.33 },
+    { "option1": "Black", "option2": "5x78inch-Flat Ends", "price": 158.33 },
+    { "option1": "Black", "option2": "5x78inch-Pointed Ends", "price": 158.33 },
+    { "option1": "Royal Blue", "option2": "5x78inch-Flat Ends", "price": 158.33 },
+    { "option1": "Royal Blue", "option2": "5x78inch-Pointed Ends", "price": 158.33 },
+    { "option1": "Dark Green", "option2": "5x78inch-Flat Ends", "price": 158.33 },
+    { "option1": "Dark Green", "option2": "5x78inch-Pointed Ends", "price": 158.33 },
+    { "option1": "Navy", "option2": "5x78inch-Flat Ends", "price": 158.33 },
+    { "option1": "Navy", "option2": "5x78inch-Pointed Ends", "price": 158.33 },
+    { "option1": "Maroon", "option2": "5x78inch-Flat Ends", "price": 158.33 },
+    { "option1": "Maroon", "option2": "5x78inch-Pointed Ends", "price": 158.33 },
+    { "option1": "Gold", "option2": "5x78inch-Flat Ends", "price": 158.33 },
+    { "option1": "Gold", "option2": "5x78inch-Pointed Ends", "price": 158.33 },
+    { "option1": "Light Pink", "option2": "5x78inch-Flat Ends", "price": 158.33 },
+    { "option1": "Light Pink", "option2": "5x78inch-Pointed Ends", "price": 158.33 },
+    { "option1": "White", "option2": "5x78inch-Flat Ends", "price": 158.33 },
+    { "option1": "White", "option2": "5x78inch-Pointed Ends", "price": 158.33 },
+    { "option1": "Purple", "option2": "5x78inch-Flat Ends", "price": 158.33 },
+    { "option1": "Purple", "option2": "5x78inch-Pointed Ends", "price": 158.33 },
+    { "option1": "Light Blue", "option2": "5x78inch-Flat Ends", "price": 158.33 },
+    { "option1": "Light Blue", "option2": "5x78inch-Pointed Ends", "price": 158.33 },
+    { "option1": "Gray", "option2": "5x78inch-Flat Ends", "price": 158.33 },
+    { "option1": "Gray", "option2": "5x78inch-Pointed Ends", "price": 158.33 },
+    { "option1": "Orange", "option2": "5x78inch-Flat Ends", "price": 158.33 },
+    { "option1": "Orange", "option2": "5x78inch-Pointed Ends", "price": 158.33 }
   ],
-  "availableConfigs": [
-    "CUSTOM"
-  ]
+  "availableConfigs": ["CUSTOM"]
 }

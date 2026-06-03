@@ -2,18 +2,9 @@
   "categoryId": "10601",
   "productName": "Wiskey Glass",
   "variants": [
-    {
-      "option1": "2-Pack",
-      "option2": "Clear",
-      "price": 99
-    },
-    {
-      "option1": "4-Pack",
-      "option2": "Clear",
-      "price": 149
-    }
+    { "option1": "11Oz 2Side", "option2": "Pack 1", "price": 164.05 },
+    { "option1": "11Oz 2Side", "option2": "Pack 3", "price": 490.05 },
+    { "option1": "11Oz 2Side", "option2": "Pack 5", "price": 816.35 }
   ],
-  "availableConfigs": [
-    "PACK_CUSTOM"
-  ]
+  "availableConfigs": ["PACK_CUSTOM"]
 }

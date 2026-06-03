@@ -2,12 +2,16 @@
   "categoryId": "30152",
   "productName": "Cap",
   "variants": [
-    {
-      "option1": "One Size",
-      "price": 119
-    }
+    { "option1": "Black", "price": 183 },
+    { "option1": "White", "price": 183 },
+    { "option1": "Khaki", "price": 183 },
+    { "option1": "Navy", "price": 183 },
+    { "option1": "Olive Green", "price": 183 },
+    { "option1": "Brown Coffee", "price": 183 },
+    { "option1": "Grey", "price": 183 },
+    { "option1": "Pink", "price": 183 },
+    { "option1": "Purple", "price": 183 },
+    { "option1": "Red", "price": 183 }
   ],
-  "availableConfigs": [
-    "CUSTOM"
-  ]
+  "availableConfigs": ["CUSTOM"]
 }

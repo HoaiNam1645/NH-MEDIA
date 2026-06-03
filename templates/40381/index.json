@@ -2,12 +2,12 @@
   "categoryId": "40381",
   "productName": "Booktracker",
   "variants": [
-    {
-      "option1": "One Size",
-      "price": 109
-    }
+    { "option1": "5x6 inches", "price": 188.95 },
+    { "option1": "6x7 inches", "price": 216.95 },
+    { "option1": "7x8 inches", "price": 249.95 },
+    { "option1": "8x9 inches", "price": 271.95 },
+    { "option1": "9x10 inches", "price": 305.95 },
+    { "option1": "10x11 inches", "price": 327.95 }
   ],
-  "availableConfigs": [
-    "CUSTOM"
-  ]
+  "availableConfigs": ["CUSTOM"]
 }

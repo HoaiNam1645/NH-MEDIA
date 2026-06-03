@@ -2,16 +2,11 @@
   "categoryId": "9519",
   "productName": "Egg-Cups",
   "variants": [
-    {
-      "option1": "2-Pack",
-      "price": 89
-    },
-    {
-      "option1": "4-Pack",
-      "price": 109
-    }
+    { "option1": "1.6 x 2.4inch", "option2": "Pack 1", "price": 94.39 },
+    { "option1": "1.6 x 2.4inch", "option2": "Pack 2", "price": 184.70 },
+    { "option1": "1.6 x 2.4inch", "option2": "Pack 3", "price": 275.16 },
+    { "option1": "1.6 x 2.4inch", "option2": "Pack 5", "price": 460.94 },
+    { "option1": "1.6 x 2.4inch", "option2": "Pack 10", "price": 920.88 }
   ],
-  "availableConfigs": [
-    "PACK_CUSTOM"
-  ]
+  "availableConfigs": ["PACK_CUSTOM"]
 }

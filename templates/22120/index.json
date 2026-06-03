@@ -2,29 +2,10 @@
   "categoryId": "22120",
   "productName": "Car Visor Clip",
   "variants": [
-    {
-      "option1": "2-Pack",
-      "option2": "Square",
-      "price": 89
-    },
-    {
-      "option1": "2-Pack",
-      "option2": "Round",
-      "price": 89
-    },
-    {
-      "option1": "4-Pack",
-      "option2": "Square",
-      "price": 129
-    },
-    {
-      "option1": "4-Pack",
-      "option2": "Round",
-      "price": 129
-    }
+    { "option1": "Size 3.5 x 2.4", "option2": "Pack 1", "price": 113.8 },
+    { "option1": "Size 3.5 x 2.4", "option2": "Pack 2", "price": 211.11 },
+    { "option1": "Size 3.5 x 2.4", "option2": "Pack 3", "price": 305.5 },
+    { "option1": "Size 3.5 x 2.4", "option2": "Pack 4", "price": 416.6 }
   ],
-  "availableConfigs": [
-    "PACK",
-    "PACK_CUSTOM"
-  ]
+  "availableConfigs": ["PACK", "PACK_CUSTOM"]
 }

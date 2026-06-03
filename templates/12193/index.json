@@ -2,20 +2,15 @@
   "categoryId": "12193",
   "productName": "Acrylic Blocks",
   "variants": [
-    {
-      "option1": "4x4 inch",
-      "price": 99
-    },
-    {
-      "option1": "4x6 inch",
-      "price": 119
-    },
-    {
-      "option1": "5x7 inch",
-      "price": 139
-    }
+    { "option1": "4x6 inch", "price": 202.77 },
+    { "option1": "5.9x5.9 inch", "price": 216.61 },
+    { "option1": "7.9x7.9 inch", "price": 316.61 },
+    { "option1": "3.93x3.93 inch", "price": 188.83 },
+    { "option1": "4.92x4.92 inch", "price": 199.94 },
+    { "option1": "3x5 inch", "price": 191.67 },
+    { "option1": "5x7 inch", "price": 247.22 },
+    { "option1": "6x9 inch", "price": 319.44 },
+    { "option1": "12x3 inch", "price": 263.89 }
   ],
-  "availableConfigs": [
-    "CUSTOM"
-  ]
+  "availableConfigs": ["CUSTOM"]
 }

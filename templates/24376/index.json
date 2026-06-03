@@ -2,28 +2,31 @@
   "categoryId": "24376",
   "productName": "Phone Case",
   "variants": [
-    {
-      "option1": "iPhone 14",
-      "price": 99
-    },
-    {
-      "option1": "iPhone 15",
-      "price": 99
-    },
-    {
-      "option1": "iPhone 15 Pro",
-      "price": 109
-    },
-    {
-      "option1": "Samsung S23",
-      "price": 99
-    },
-    {
-      "option1": "Samsung S24",
-      "price": 99
-    }
+    { "option1": "iPhone 11", "option2": "mixed color 1", "price": 111.07 },
+    { "option1": "iPhone 11 Pro", "option2": "mixed color 1", "price": 111.07 },
+    { "option1": "iPhone 11 Pro Max", "option2": "mixed color 1", "price": 111.07 },
+    { "option1": "iPhone 12 Mini", "option2": "mixed color 1", "price": 111.07 },
+    { "option1": "iPhone 12 / 12 Pro", "option2": "mixed color 1", "price": 111.07 },
+    { "option1": "iPhone 12 Pro Max", "option2": "mixed color 1", "price": 111.07 },
+    { "option1": "iPhone 13 Mini", "option2": "mixed color 1", "price": 111.07 },
+    { "option1": "iPhone 13 / 14", "option2": "mixed color 1", "price": 111.07 },
+    { "option1": "iPhone 13 Pro", "option2": "mixed color 1", "price": 111.07 },
+    { "option1": "iPhone 13 Pro Max", "option2": "mixed color 1", "price": 111.07 },
+    { "option1": "iPhone 14 Plus", "option2": "mixed color 1", "price": 111.07 },
+    { "option1": "iPhone 14 Pro", "option2": "mixed color 1", "price": 111.07 },
+    { "option1": "iPhone 14 Pro Max", "option2": "mixed color 1", "price": 111.07 },
+    { "option1": "iPhone 15", "option2": "mixed color 1", "price": 111.07 },
+    { "option1": "iPhone 15 Plus", "option2": "mixed color 1", "price": 111.07 },
+    { "option1": "iPhone 15 Pro", "option2": "mixed color 1", "price": 111.07 },
+    { "option1": "iPhone 15 Pro Max", "option2": "mixed color 1", "price": 111.07 },
+    { "option1": "iPhone 16", "option2": "mixed color 1", "price": 111.07 },
+    { "option1": "iPhone 16 Plus", "option2": "mixed color 1", "price": 111.07 },
+    { "option1": "iPhone 16 Pro", "option2": "mixed color 1", "price": 111.07 },
+    { "option1": "iPhone 16 Pro Max", "option2": "mixed color 1", "price": 111.07 },
+    { "option1": "iPhone 17", "option2": "mixed color 1", "price": 111.07 },
+    { "option1": "iPhone 17 Plus", "option2": "mixed color 1", "price": 111.07 },
+    { "option1": "iPhone 17 Pro", "option2": "mixed color 1", "price": 111.07 },
+    { "option1": "iPhone 17 Pro Max", "option2": "mixed color 1", "price": 111.07 }
   ],
-  "availableConfigs": [
-    "CUSTOM"
-  ]
+  "availableConfigs": ["CUSTOM"]
 }

@@ -2,24 +2,11 @@
   "categoryId": "29007",
   "productName": "Bikini",
   "variants": [
-    {
-      "option1": "S",
-      "price": 149
-    },
-    {
-      "option1": "M",
-      "price": 149
-    },
-    {
-      "option1": "L",
-      "price": 149
-    },
-    {
-      "option1": "XL",
-      "price": 149
-    }
+    { "option1": "Multicolor", "option2": "S", "price": 194.4 },
+    { "option1": "Multicolor", "option2": "M", "price": 194.4 },
+    { "option1": "Multicolor", "option2": "L", "price": 194.4 },
+    { "option1": "Multicolor", "option2": "XL", "price": 194.4 },
+    { "option1": "Multicolor", "option2": "XXL", "price": 194.4 }
   ],
-  "availableConfigs": [
-    "CUSTOM"
-  ]
+  "availableConfigs": ["CUSTOM"]
 }
