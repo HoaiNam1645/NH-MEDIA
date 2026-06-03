@@ -160,9 +160,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       : null;
     const maxImages = Math.min(imageStartCol && imageEndCol ? (imageEndCol - imageStartCol + 1) : 10, 10);
 
+    // Unhide image columns (templates may have them hidden)
+    if (imageStartCol && imageEndCol) {
+      for (let col = imageStartCol; col <= imageEndCol; col++) {
+        const column = sheet.getColumn(col);
+        column.hidden = false;
+      }
+    }
+
     for (const product of products) {
       const images = Array.isArray(product.images) ? product.images as any[] : [];
-      const productName = product.listingTitle || product.title || 'Untitled';
+      const productName = product.listingTitle || '';
       
       // Use custom description if provided, otherwise use product description, then template description
       const description = customDescription || product.description || categoryIndex.description || '';
