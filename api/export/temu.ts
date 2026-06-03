@@ -148,7 +148,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const imageEndCol = config.images?.end_col
       ? colLetterToIndex(config.images.end_col)
       : null;
-    const maxImages = imageStartCol && imageEndCol ? (imageEndCol - imageStartCol + 1) : 20;
+    const maxImages = Math.min(imageStartCol && imageEndCol ? (imageEndCol - imageStartCol + 1) : 10, 10);
 
     for (const product of products) {
       const images = Array.isArray(product.images) ? product.images as any[] : [];
