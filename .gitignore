@@ -35,3 +35,7 @@ public/firebase-config.js
 
 # Local temporary files
 _local/
+# Temp files
+~$*
+*.xlsx
+!templates/**/*.xlsx

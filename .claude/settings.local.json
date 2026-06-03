@@ -32,7 +32,13 @@
       "Bash(cp:*)",
       "Bash(npx tsx -e \":*)",
       "Bash(unzip -o \"wooden block_Update.zip\" -d \"wooden_block_update\")",
-      "Bash(ls -d */)"
+      "Bash(ls -d */)",
+      "Bash(for d:*)",
+      "Bash(do echo:*)",
+      "Read(//g/Tu dong hoa/NH-MEDIA/$d/**)",
+      "Bash(node create-user-guide.cjs)",
+      "Bash(rm create-user-guide.cjs)",
+      "Bash(ls -la docs/*.docx)"
     ]
   }
 }

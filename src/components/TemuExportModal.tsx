@@ -76,8 +76,10 @@ const TemuExportModal: React.FC<TemuExportModalProps> = ({
   const [configType, setConfigType] = useState('CUSTOM');
   const [skuPrefix, setSkuPrefix] = useState('CG');
 
-  // New fields for custom description
-  const [customDescription, setCustomDescription] = useState('');
+  // Description field - shows default from template, can be edited
+  const [description, setDescription] = useState('');
+  const [defaultDescription, setDefaultDescription] = useState('');
+  const [loadingDescription, setLoadingDescription] = useState(false);
 
   // Custom variants from uploaded JSON
   const [customVariants, setCustomVariants] = useState<Variant[] | null>(null);
@@ -91,6 +93,25 @@ const TemuExportModal: React.FC<TemuExportModalProps> = ({
     if (selectedTemuCategory && !selectedTemuCategory.configs.includes(configType)) {
       setConfigType(selectedTemuCategory.configs[0]);
     }
+  }, [temuCategoryId]);
+
+  // Fetch default description from template when category changes
+  useEffect(() => {
+    if (!temuCategoryId) return;
+
+    setLoadingDescription(true);
+    fetch(`/api/templates/${temuCategoryId}/index`)
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        const desc = data?.description || '';
+        setDefaultDescription(desc);
+        setDescription(desc); // Pre-fill với mô tả mặc định
+      })
+      .catch(() => {
+        setDefaultDescription('');
+        setDescription('');
+      })
+      .finally(() => setLoadingDescription(false));
   }, [temuCategoryId]);
 
   // Load products
@@ -184,7 +205,7 @@ const TemuExportModal: React.FC<TemuExportModalProps> = ({
           configType,
           skuPrefix,
           customVariants: customVariants || undefined,
-          customDescription: customDescription || undefined,
+          customDescription: description || undefined,
         }),
       });
 
@@ -293,24 +314,46 @@ const TemuExportModal: React.FC<TemuExportModalProps> = ({
             </div>
           )}
 
-          {/* Custom Description */}
-          <div className="space-y-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50/50 dark:bg-gray-800/50">
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">
-              Custom Content (Optional)
-            </h3>
-            
-            <div>
-              <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wider">
-                Product Description
+          {/* Product Description */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Mô tả sản phẩm (Description)
               </label>
-              <textarea
-                value={customDescription}
-                onChange={(e) => setCustomDescription(e.target.value)}
-                placeholder="Để trống = Dùng mô tả gốc của sản phẩm"
-                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                rows={3}
-              />
+              {description !== defaultDescription && defaultDescription && (
+                <button
+                  type="button"
+                  onClick={() => setDescription(defaultDescription)}
+                  className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  Khôi phục mặc định
+                </button>
+              )}
             </div>
+
+            {loadingDescription ? (
+              <div className="text-sm text-gray-500 py-2">Đang tải mô tả mặc định...</div>
+            ) : (
+              <>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Nhập mô tả sản phẩm..."
+                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  rows={4}
+                />
+                {defaultDescription && description === defaultDescription && (
+                  <p className="text-xs text-green-600 dark:text-green-400">
+                    ✓ Đang sử dụng mô tả mặc định của {selectedTemuCategory?.productName}
+                  </p>
+                )}
+                {description && description !== defaultDescription && (
+                  <p className="text-xs text-orange-600 dark:text-orange-400">
+                    ⚠ Mô tả đã được chỉnh sửa
+                  </p>
+                )}
+              </>
+            )}
           </div>
 
           {/* Custom Variants Upload/Paste */}
