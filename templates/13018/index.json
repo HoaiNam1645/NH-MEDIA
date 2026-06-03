@@ -2,16 +2,10 @@
   "categoryId": "13018",
   "productName": "Wooden Block",
   "variants": [
-    {
-      "option1": "Small",
-      "price": 99
-    },
-    {
-      "option1": "Large",
-      "price": 129
-    }
+    { "option1": "4 inch", "price": 100 },
+    { "option1": "5 inch", "price": 110 },
+    { "option1": "6 inch", "price": 120 },
+    { "option1": "8 inch", "price": 130 }
   ],
-  "availableConfigs": [
-    "NORMAL"
-  ]
+  "availableConfigs": ["NORMAL"]
 }
