@@ -154,8 +154,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const images = Array.isArray(product.images) ? product.images as any[] : [];
       const productName = product.listingTitle || product.title || 'Untitled';
       
-      // Use custom description if provided, otherwise use product description
-      const description = customDescription || product.description || '';
+      // Use custom description if provided, otherwise use product description, then template description
+      const description = customDescription || product.description || categoryIndex.description || '';
       
       // SKU Base for display/calculated result
       const calculatedBaseSku = `${skuPrefix}${String(productCounter).padStart(6, '0')}`;
