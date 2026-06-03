@@ -14,6 +14,16 @@ function colLetterToIndex(col: string) {
   return index;
 }
 
+function indexToColLetter(index: number): string {
+  let result = '';
+  while (index > 0) {
+    const remainder = (index - 1) % 26;
+    result = String.fromCharCode(65 + remainder) + result;
+    index = Math.floor((index - 1) / 26);
+  }
+  return result;
+}
+
 function loadCategoryIndex(temuCategoryId: string) {
   // Load main index
   const indexPath = path.join(process.cwd(), 'templates', 'index.json');
@@ -215,18 +225,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         row.getCell('M').value = { formula: excelFormulaM, result: calculatedBaseSku };
         row.getCell('N').value = { formula: excelFormulaN, result: sku };
 
-        // Write all product images starting from images.start_col
-        if (imageStartCol) {
+        // Write all product images starting from images.start_col (use column letters for better compatibility)
+        if (config.images?.start_col) {
           const imgSlice = images.slice(0, maxImages);
-          console.log(`[Temu Export] Product ${productName.slice(0,30)}: ${images.length} images, writing ${imgSlice.length} to cols ${imageStartCol}-${imageStartCol + imgSlice.length - 1}`);
+          const startColLetter = config.images.start_col;
+          const startColIndex = colLetterToIndex(startColLetter);
+          console.log(`[Temu Export] Product ${productName.slice(0,30)}: ${images.length} images, writing ${imgSlice.length} starting at ${startColLetter}`);
           for (let i = 0; i < imgSlice.length; i++) {
             const img = imgSlice[i];
             if (img?.url) {
-              row.getCell(imageStartCol + i).value = img.url;
+              const colLetter = indexToColLetter(startColIndex + i);
+              row.getCell(colLetter).value = img.url;
             }
           }
         } else {
-          console.log(`[Temu Export] WARNING: No imageStartCol defined for this config!`);
+          console.log(`[Temu Export] WARNING: No images.start_col defined for this config!`);
         }
 
         rowIndex++;
