@@ -73,6 +73,10 @@ const TemuExportModal: React.FC<TemuExportModalProps> = ({
 
   const [temuCategoryId, setTemuCategoryId] = useState('10585');
   const [configType, setConfigType] = useState('CUSTOM');
+  const [skuPrefix, setSkuPrefix] = useState('CG');
+
+  // New fields for custom description
+  const [customDescription, setCustomDescription] = useState('');
 
   // Custom variants from uploaded JSON
   const [customVariants, setCustomVariants] = useState<Variant[] | null>(null);
@@ -177,7 +181,9 @@ const TemuExportModal: React.FC<TemuExportModalProps> = ({
           productIds: Array.from(selectedIds),
           temuCategoryId,
           configType,
+          skuPrefix,
           customVariants: customVariants || undefined,
+          customDescription: customDescription || undefined,
         }),
       });
 
@@ -231,21 +237,35 @@ const TemuExportModal: React.FC<TemuExportModalProps> = ({
           )}
 
           {/* Temu Category */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Temu Category
-            </label>
-            <select
-              value={temuCategoryId}
-              onChange={(e) => setTemuCategoryId(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-            >
-              {TEMU_CATEGORIES.map((cat) => (
-                <option key={cat.categoryId} value={cat.categoryId}>
-                  [{cat.categoryId}] {cat.productName}
-                </option>
-              ))}
-            </select>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="col-span-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Temu Category
+              </label>
+              <select
+                value={temuCategoryId}
+                onChange={(e) => setTemuCategoryId(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+              >
+                {TEMU_CATEGORIES.map((cat) => (
+                  <option key={cat.categoryId} value={cat.categoryId}>
+                    [{cat.categoryId}] {cat.productName}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="col-span-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                SKU Prefix (CG)
+              </label>
+              <input
+                type="text"
+                value={skuPrefix}
+                onChange={(e) => setSkuPrefix(e.target.value)}
+                placeholder="Ví dụ: CG hoặc 100"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+              />
+            </div>
           </div>
 
           {/* Config Type */}
@@ -271,6 +291,26 @@ const TemuExportModal: React.FC<TemuExportModalProps> = ({
               </div>
             </div>
           )}
+
+          {/* Custom Description */}
+          <div className="space-y-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50/50 dark:bg-gray-800/50">
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">
+              Custom Content (Optional)
+            </h3>
+            
+            <div>
+              <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wider">
+                Product Description
+              </label>
+              <textarea
+                value={customDescription}
+                onChange={(e) => setCustomDescription(e.target.value)}
+                placeholder="Để trống = Dùng mô tả gốc của sản phẩm"
+                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                rows={3}
+              />
+            </div>
+          </div>
 
           {/* Custom Variants Upload/Paste */}
           <div>
@@ -302,43 +342,85 @@ const TemuExportModal: React.FC<TemuExportModalProps> = ({
                   <textarea
                     value={variantsText}
                     onChange={(e) => setVariantsText(e.target.value)}
-                    placeholder={`[{"option1":"White","option2":"11OZ","price":105}]`}
-                    className="flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 font-mono"
-                    rows={2}
+                    placeholder="Màu x Kích thước x Giá (VD: Trắng x 4 inch x 100)"
+                    className="flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 font-sans"
+                    rows={4}
                   />
                   <button
                     type="button"
                     onClick={() => {
                       const text = variantsText.trim();
                       if (!text) {
-                        setError('Nhập JSON variants');
+                        setError('Nhập danh sách variants');
                         return;
                       }
+                      
                       try {
-                        const json = JSON.parse(text);
-                        const variants = Array.isArray(json) ? json : json.variants;
-                        if (!Array.isArray(variants) || variants.length === 0) {
-                          setError('JSON phải là mảng variants');
+                        // Check if it's already JSON (for backward compatibility)
+                        if (text.startsWith('[') || text.startsWith('{')) {
+                          const json = JSON.parse(text);
+                          const variants = Array.isArray(json) ? json : json.variants;
+                          if (Array.isArray(variants) && variants.length > 0) {
+                            setCustomVariants(variants);
+                            setVariantsFileName(`${variants.length} variants (JSON)`);
+                            setVariantsText('');
+                            setError(null);
+                            return;
+                          }
+                        }
+
+                        // Otherwise, parse as "Color x Size x Price"
+                        const lines = text.split('\n').filter(l => l.trim() !== '');
+                        const parsedVariants: Variant[] = lines.map(line => {
+                          const parts = line.split(/[x*|]/i).map(p => p.trim());
+
+                          let color = '';
+                          let size = '';
+                          let price = 100;
+
+                          if (parts.length >= 3) {
+                            color = parts[0];
+                            size = parts[1];
+                            price = parseFloat(parts[2].replace(/[^0-9.]/g, '')) || 100;
+                          } else if (parts.length === 2) {
+                            // If 2 parts, check if the second part looks like a price
+                            const p2 = parts[1].replace(/[^0-9.]/g, '');
+                            const hasPriceIndicator = p2 !== '' && !parts[1].toLowerCase().includes('inch') && !parts[1].toLowerCase().includes('oz');
+                            
+                            if (hasPriceIndicator) {
+                              size = parts[0];
+                              price = parseFloat(p2) || 100;
+                            } else {
+                              color = parts[0];
+                              size = parts[1];
+                            }
+                          } else {
+                            size = parts[0];
+                          }
+
+                          return {
+                            option1: color,
+                            option2: size,
+                            price
+                          };
+                        });
+
+                        if (parsedVariants.length === 0) {
+                          setError('Không thể đọc dữ liệu. Hãy dùng định dạng: Màu x Size x Giá');
                           return;
                         }
-                        const valid = variants.every((v: any) =>
-                          typeof v.option1 === 'string' &&
-                          typeof v.option2 === 'string' &&
-                          typeof v.price === 'number'
-                        );
-                        if (!valid) {
-                          setError('Cần: option1, option2 (string), price (number)');
-                          return;
-                        }
-                        setCustomVariants(variants);
-                        setVariantsFileName(`${variants.length} variants`);
+
+                        setCustomVariants(parsedVariants);
+                        setVariantsFileName(`${parsedVariants.length} variants`);
                         setVariantsText('');
                         setError(null);
-                      } catch {
-                        setError('JSON không hợp lệ');
+                        // Add a small success indicator or log
+                        console.log('Parsed Variants:', parsedVariants);
+                      } catch (err) {
+                        setError('Lỗi xử lý dữ liệu. Hãy kiểm tra lại định dạng.');
                       }
                     }}
-                    className="px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                    className="px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 h-fit self-end mb-1"
                   >
                     Apply
                   </button>
@@ -354,7 +436,7 @@ const TemuExportModal: React.FC<TemuExportModalProps> = ({
                       className="sr-only"
                     />
                   </label>
-                  <span>• để trống = dùng mặc định template</span>
+                  <span>• Định dạng: <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded text-blue-600">Màu x Size x Giá</code> (mỗi dòng 1 variant)</span>
                 </div>
               </div>
             )}

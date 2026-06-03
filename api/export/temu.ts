@@ -1,31 +1,30 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { requireAuth } from '../_lib/auth';
+import { prisma } from '../_lib/prisma';
+import { Workbook } from '../_lib/excel';
+import { VercelRequest, VercelResponse } from '@vercel/node';
+import { badRequest, serverError } from '../_lib/helpers';
 import fs from 'fs';
 import path from 'path';
-import { prisma } from '../_lib/prisma.js';
-import { requireAuth } from '../_lib/auth.js';
-import { badRequest, serverError } from '../_lib/helpers.js';
-import { Workbook } from '../_lib/excel.js';
 
-const TEMPLATES_DIR = process.cwd() + '/templates';
-
-function colLetterToIndex(col: string): number {
+function colLetterToIndex(col: string) {
   let index = 0;
   for (let i = 0; i < col.length; i++) {
-    index = index * 26 + (col.charCodeAt(i) - 64);
+    index = index * 26 + col.charCodeAt(i) - 64;
   }
   return index;
 }
 
 function loadCategoryIndex(temuCategoryId: string) {
-  const indexPath = path.join(TEMPLATES_DIR, temuCategoryId, 'index.json');
+  const indexPath = path.join(process.cwd(), 'templates', 'index.json');
   if (!fs.existsSync(indexPath)) return null;
-  return JSON.parse(fs.readFileSync(indexPath, 'utf-8'));
+  const index = JSON.parse(fs.readFileSync(indexPath, 'utf8'));
+  return index.find((c: any) => c.categoryId === temuCategoryId);
 }
 
-function loadConfig(temuCategoryId: string, configType: string) {
-  const configPath = path.join(TEMPLATES_DIR, temuCategoryId, `${configType.toLowerCase()}.json`);
+function loadConfig(temuCategoryId: string, type: string) {
+  const configPath = path.join(process.cwd(), 'templates', temuCategoryId, `${type.toLowerCase()}.json`);
   if (!fs.existsSync(configPath)) return null;
-  return JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+  return JSON.parse(fs.readFileSync(configPath, 'utf8'));
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -42,17 +41,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       categoryId,         // DB category ID (for filtering products)
       temuCategoryId,     // Temu category ID (e.g., "10585" for Mugs)
       configType = 'CUSTOM',
+      skuPrefix = 'CG',    // Prefix for the SKU formula
       customVariants,     // Optional: user-uploaded variants array
+      customDescription,  // Optional: user-provided description
     } = req.body || {};
 
-    console.log('[Temu Export] Request body:', JSON.stringify({
-      productIds: productIds?.length,
-      categoryId,
+    console.log('[Temu Export] Start process', {
       temuCategoryId,
       configType,
-      customVariantsCount: customVariants?.length || 0,
-      customVariants: customVariants?.slice(0, 2) // Log first 2 variants
-    }));
+      skuPrefix,
+      hasCustomDescription: !!customDescription,
+      customDescriptionLength: customDescription?.length,
+    });
 
     if (!temuCategoryId) {
       return badRequest(res, 'temuCategoryId is required (e.g., "10585" for Mugs)');
@@ -64,31 +64,39 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // Load Temu config
     const categoryIndex = loadCategoryIndex(temuCategoryId);
+    console.log('[Temu Export] Category index loaded:', !!categoryIndex, temuCategoryId);
+    
     if (!categoryIndex) {
       return badRequest(res, `No template found for temuCategoryId: ${temuCategoryId}`);
     }
 
     const config = loadConfig(temuCategoryId, configType);
+    console.log('[Temu Export] Config loaded:', !!config, configType);
+    
     if (!config) {
       return badRequest(res, `Config type "${configType}" not found for category ${temuCategoryId}. Available: ${categoryIndex.availableConfigs?.join(', ')}`);
     }
 
-    // Use custom variants if provided, otherwise use template variants
+    // Use custom variants if provided, otherwise use template variants from index.json
     const useCustom = customVariants && Array.isArray(customVariants) && customVariants.length > 0;
     const variants: any[] = useCustom
       ? customVariants
       : (categoryIndex.variants || []);
 
-    console.log(`[Temu Export] Using ${useCustom ? 'CUSTOM' : 'TEMPLATE'} variants: ${variants.length} variants`);
+    console.log(`[Temu Export] Variants source: ${useCustom ? 'CUSTOM' : 'TEMPLATE'}`);
+    console.log(`[Temu Export] Variants count: ${variants.length}`);
+    if (!useCustom) {
+      console.log(`[Temu Export] Template variants:`, JSON.stringify(variants));
+    }
 
     if (variants.length === 0) {
       return badRequest(res, `No variants defined. Upload a JSON file or check template for temuCategoryId: ${temuCategoryId}`);
     }
 
-    // Fetch products from DB
-    const whereClause: any = { teamId: auth.teamId };
+    // Fetch products
+    let whereClause: any = { teamId: auth.teamId };
     if (categoryId) whereClause.categoryId = categoryId;
-    if (productIds && Array.isArray(productIds) && productIds.length > 0) {
+    if (Array.isArray(productIds) && productIds.length > 0) {
       whereClause.id = { in: productIds };
     }
 
@@ -98,11 +106,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
 
     if (products.length === 0) {
-      return badRequest(res, 'No products found');
+      return badRequest(res, 'No products found matching the criteria');
     }
 
-    // Load template xlsx for headers
-    const templateXlsx = path.join(TEMPLATES_DIR, temuCategoryId, 'template.xlsx');
+    // Load Template XLSX
+    const templateXlsx = path.join(process.cwd(), 'templates', temuCategoryId, 'template.xlsx');
     const workbook = new Workbook();
     if (fs.existsSync(templateXlsx)) {
       await workbook.xlsx.readFile(templateXlsx);
@@ -121,6 +129,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // Write data rows starting from row 5
     let rowIndex = config.start_row || 5;
+    let productCounter = 1; // Used for "CG00000x" part
     const imageStartCol = config.images?.start_col
       ? colLetterToIndex(config.images.start_col)
       : null;
@@ -132,32 +141,67 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     for (const product of products) {
       const images = Array.isArray(product.images) ? product.images as any[] : [];
       const productName = product.listingTitle || product.title || 'Untitled';
-      const description = product.description || '';
-      const baseSku = (product.title || product.id)
-        .replace(/[^a-zA-Z0-9]/g, '-')
-        .toLowerCase()
-        .slice(0, 20);
+      
+      // Use custom description if provided, otherwise use product description
+      const description = customDescription || product.description || '';
+      
+      // SKU Base for display/calculated result
+      const calculatedBaseSku = `${skuPrefix}${String(productCounter).padStart(6, '0')}`;
+      productCounter++;
 
+      let variantCounter = 0;
       for (const variant of variants) {
         const option1 = variant.option1 || '';
         const option2 = variant.option2 || '';
         const price = String(variant.price || '');
-        const slugOption = `${option1}-${option2}`.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase().replace(/-+/g, '-').replace(/-$/, '');
-        const sku = `${baseSku}-${slugOption}`;
+
+        // Smart fallback: if template uses {option1} but not {option2}, 
+        // and variant has option2 but no option1, use option2 for option1.
+        const templateStr = JSON.stringify(config.fixed_columns);
+        const templateUsesOption2 = templateStr.includes('{option2}');
+
+        let finalOption1 = option1;
+        let finalOption2 = option2;
+
+        if (!templateUsesOption2 && !option1 && option2) {
+            finalOption1 = option2;
+        }
+
+        // Calculate SKUs based on Excel formulas provided by user
+        const variantCount = variants.length;
+        
+        // Formula for Contribution Goods (M)
+        const excelFormulaM = `="${skuPrefix}"&TEXT(ROUNDUP((ROW()-4)/${variantCount},0),"000000")`;
+        
+        // Formula for Contribution SKU (N)
+        const excelFormulaN = `=M${rowIndex}&"-"&COUNTIF($M$5:M${rowIndex},M${rowIndex})-1`;
+        
+        const sku = `${calculatedBaseSku}-${variantCounter}`;
+        variantCounter++;
 
         const row = sheet.getRow(rowIndex);
 
-        // Apply fixed columns - replace {placeholder} values
+        // Apply fixed columns - replace {placeholder} values using safe split/join
+        const placeholders = {
+          '{product_name}': productName,
+          '{product_description}': description,
+          '{sku}': sku,
+          '{option1}': finalOption1,
+          '{option2}': finalOption2,
+          '{price}': price
+        };
+
         for (const [col, rawValue] of Object.entries(config.fixed_columns)) {
-          let value = String(rawValue)
-            .replace('{product_name}', productName)
-            .replace('{product_description}', description)
-            .replace('{sku}', sku)
-            .replace('{option1}', option1)
-            .replace('{option2}', option2)
-            .replace('{price}', price);
+          let value = String(rawValue);
+          for (const [placeholder, val] of Object.entries(placeholders)) {
+            value = value.split(placeholder).join(val);
+          }
           row.getCell(col).value = value;
         }
+
+        // FORCE write formulas to M and N (Ensures they appear even if not in template JSON)
+        row.getCell('M').value = { formula: excelFormulaM, result: calculatedBaseSku };
+        row.getCell('N').value = { formula: excelFormulaN, result: sku };
 
         // Write all product images starting from images.start_col
         if (imageStartCol) {
@@ -174,21 +218,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     }
 
-    // Debug mode
-    if (req.query?.debug === '1') {
-      return res.status(200).json({
-        productCount: products.length,
-        totalRows: rowIndex - (config.start_row || 5),
-        temuCategoryId,
-        configType,
-        variantCount: variants.length,
-        imageStartCol: config.images?.start_col,
-        imageEndCol: config.images?.end_col,
-      });
-    }
-
     const buffer = await workbook.xlsx.writeBuffer();
-    const filename = `temu-${categoryIndex.productName || temuCategoryId}-${configType.toLowerCase()}-${Date.now()}.xlsx`;
+    const filename = `temu-${temuCategoryId}-${configType.toLowerCase()}-${Date.now()}.xlsx`;
 
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
