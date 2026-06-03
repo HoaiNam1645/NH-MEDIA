@@ -15,10 +15,22 @@ function colLetterToIndex(col: string) {
 }
 
 function loadCategoryIndex(temuCategoryId: string) {
+  // Load main index
   const indexPath = path.join(process.cwd(), 'templates', 'index.json');
   if (!fs.existsSync(indexPath)) return null;
   const index = JSON.parse(fs.readFileSync(indexPath, 'utf8'));
-  return index.find((c: any) => c.categoryId === temuCategoryId);
+  const category = index.find((c: any) => c.categoryId === temuCategoryId);
+  if (!category) return null;
+
+  // Load category-specific index.json for variants
+  const categoryIndexPath = path.join(process.cwd(), 'templates', temuCategoryId, 'index.json');
+  if (fs.existsSync(categoryIndexPath)) {
+    const categoryIndex = JSON.parse(fs.readFileSync(categoryIndexPath, 'utf8'));
+    // Merge: category-specific values override main index
+    return { ...category, ...categoryIndex };
+  }
+
+  return category;
 }
 
 function loadConfig(temuCategoryId: string, type: string) {
