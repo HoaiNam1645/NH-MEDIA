@@ -177,7 +177,7 @@ const TemuExportModal: React.FC<TemuExportModalProps> = ({
         const variants = Array.isArray(json) ? json : json.variants;
 
         if (!Array.isArray(variants) || variants.length === 0) {
-          setError('JSON phải có mảng variants với option1, option2, price');
+          setError('JSON must contain variants array with option1, option2, price');
           return;
         }
 
@@ -189,7 +189,7 @@ const TemuExportModal: React.FC<TemuExportModalProps> = ({
         );
 
         if (!valid) {
-          setError('Mỗi variant phải có: option1 (string), option2 (string), price (number)');
+          setError('Each variant must have: option1 (string), option2 (string), price (number)');
           return;
         }
 
@@ -197,7 +197,7 @@ const TemuExportModal: React.FC<TemuExportModalProps> = ({
         setVariantsFileName(file.name);
         setError(null);
       } catch (err) {
-        setError('File JSON không hợp lệ');
+        setError('Invalid JSON file');
       }
     };
     reader.readAsText(file);
@@ -306,7 +306,7 @@ const TemuExportModal: React.FC<TemuExportModalProps> = ({
                 type="text"
                 value={skuPrefix}
                 onChange={(e) => setSkuPrefix(e.target.value)}
-                placeholder="Ví dụ: CG hoặc 100"
+                placeholder="e.g., CG or 100"
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
               />
             </div>
@@ -340,7 +340,7 @@ const TemuExportModal: React.FC<TemuExportModalProps> = ({
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Mô tả sản phẩm (Description)
+                Product Description
               </label>
               {description !== defaultDescription && defaultDescription && (
                 <button
@@ -348,30 +348,30 @@ const TemuExportModal: React.FC<TemuExportModalProps> = ({
                   onClick={() => setDescription(defaultDescription)}
                   className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
                 >
-                  Khôi phục mặc định
+                  Reset to default
                 </button>
               )}
             </div>
 
             {loadingDescription ? (
-              <div className="text-sm text-gray-500 py-2">Đang tải mô tả mặc định...</div>
+              <div className="text-sm text-gray-500 py-2">Loading default description...</div>
             ) : (
               <>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Nhập mô tả sản phẩm..."
+                  placeholder="Enter product description..."
                   className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   rows={4}
                 />
                 {defaultDescription && description === defaultDescription && (
                   <p className="text-xs text-green-600 dark:text-green-400">
-                    ✓ Đang sử dụng mô tả mặc định của {selectedTemuCategory?.productName}
+                    ✓ Using default description for {selectedTemuCategory?.productName}
                   </p>
                 )}
                 {description && description !== defaultDescription && (
                   <p className="text-xs text-orange-600 dark:text-orange-400">
-                    ⚠ Mô tả đã được chỉnh sửa
+                    ⚠ Description has been modified
                   </p>
                 )}
               </>
@@ -390,13 +390,13 @@ const TemuExportModal: React.FC<TemuExportModalProps> = ({
                   onClick={clearCustomVariants}
                   className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
                 >
-                  Khôi phục mặc định
+                  Reset to default
                 </button>
               )}
             </div>
 
             {loadingTemplate ? (
-              <div className="text-sm text-gray-500 py-2">Đang tải variants mặc định...</div>
+              <div className="text-sm text-gray-500 py-2">Loading default variants...</div>
             ) : customVariants ? (
               <div className="space-y-2">
                 <div className="flex items-center gap-2 p-3 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg">
@@ -406,7 +406,7 @@ const TemuExportModal: React.FC<TemuExportModalProps> = ({
                       {variantsFileName || 'Custom variants'}
                     </div>
                     <div className="text-xs text-orange-600 dark:text-orange-400">
-                      {customVariants.length} variants (đã chỉnh sửa)
+                      {customVariants.length} variants (modified)
                     </div>
                   </div>
                 </div>
@@ -426,7 +426,7 @@ const TemuExportModal: React.FC<TemuExportModalProps> = ({
                   <CheckIcon className="h-5 w-5 text-green-600 dark:text-green-400" />
                   <div className="flex-1">
                     <div className="text-sm font-medium text-green-700 dark:text-green-300">
-                      Variants mặc định của {selectedTemuCategory?.productName}
+                      Default variants for {selectedTemuCategory?.productName}
                     </div>
                     <div className="text-xs text-green-600 dark:text-green-400">
                       {defaultVariants.length} variants
@@ -442,11 +442,11 @@ const TemuExportModal: React.FC<TemuExportModalProps> = ({
                     </div>
                   ))}
                 </div>
-                <p className="text-xs text-gray-500">Muốn thay đổi? Nhập variants mới bên dưới:</p>
+                <p className="text-xs text-gray-500">Want to change? Enter new variants below:</p>
               </div>
             ) : (
               <div className="text-sm text-yellow-600 dark:text-yellow-400 py-2">
-                ⚠ Không có variants mặc định. Vui lòng nhập variants:
+                ⚠ No default variants available. Please enter variants:
               </div>
             )}
 
@@ -458,7 +458,7 @@ const TemuExportModal: React.FC<TemuExportModalProps> = ({
                   <textarea
                     value={variantsText}
                     onChange={(e) => setVariantsText(e.target.value)}
-                    placeholder="Màu x Kích thước x Giá (VD: Trắng x 4 inch x 100)"
+                    placeholder="Color x Size x Price (e.g., White x 4 inch x 100)"
                     className="flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 font-sans"
                     rows={4}
                   />
@@ -467,7 +467,7 @@ const TemuExportModal: React.FC<TemuExportModalProps> = ({
                     onClick={() => {
                       const text = variantsText.trim();
                       if (!text) {
-                        setError('Nhập danh sách variants');
+                        setError('Please enter variants list');
                         return;
                       }
                       
@@ -522,7 +522,7 @@ const TemuExportModal: React.FC<TemuExportModalProps> = ({
                         });
 
                         if (parsedVariants.length === 0) {
-                          setError('Không thể đọc dữ liệu. Hãy dùng định dạng: Màu x Size x Giá');
+                          setError('Cannot parse data. Use format: Color x Size x Price');
                           return;
                         }
 
@@ -533,7 +533,7 @@ const TemuExportModal: React.FC<TemuExportModalProps> = ({
                         // Add a small success indicator or log
                         console.log('Parsed Variants:', parsedVariants);
                       } catch (err) {
-                        setError('Lỗi xử lý dữ liệu. Hãy kiểm tra lại định dạng.');
+                        setError('Error processing data. Please check the format.');
                       }
                     }}
                     className="px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 h-fit self-end mb-1"
@@ -552,7 +552,7 @@ const TemuExportModal: React.FC<TemuExportModalProps> = ({
                       className="sr-only"
                     />
                   </label>
-                  <span>• Định dạng: <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded text-blue-600">Màu x Size x Giá</code> (mỗi dòng 1 variant)</span>
+                  <span>• Format: <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded text-blue-600">Color x Size x Price</code> (one variant per line)</span>
                 </div>
               </div>
             )}
