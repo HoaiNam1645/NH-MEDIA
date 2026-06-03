@@ -81,10 +81,12 @@ const TemuExportModal: React.FC<TemuExportModalProps> = ({
   const [defaultDescription, setDefaultDescription] = useState('');
   const [loadingDescription, setLoadingDescription] = useState(false);
 
-  // Custom variants from uploaded JSON
+  // Variants - default from template or custom
+  const [defaultVariants, setDefaultVariants] = useState<Variant[]>([]);
   const [customVariants, setCustomVariants] = useState<Variant[] | null>(null);
   const [variantsFileName, setVariantsFileName] = useState<string | null>(null);
   const [variantsText, setVariantsText] = useState('');
+  const [loadingTemplate, setLoadingTemplate] = useState(false);
 
   const selectedTemuCategory = TEMU_CATEGORIES.find(c => c.categoryId === temuCategoryId);
 
@@ -95,23 +97,43 @@ const TemuExportModal: React.FC<TemuExportModalProps> = ({
     }
   }, [temuCategoryId]);
 
-  // Fetch default description from template when category changes
+  // Fetch default description and variants from template when category changes
   useEffect(() => {
     if (!temuCategoryId) return;
 
+    setLoadingTemplate(true);
     setLoadingDescription(true);
     fetch(`/api/templates?categoryId=${temuCategoryId}`)
       .then(res => res.ok ? res.json() : null)
       .then(data => {
+        // Load description
         const desc = data?.description || '';
         setDefaultDescription(desc);
-        setDescription(desc); // Pre-fill với mô tả mặc định
+        setDescription(desc);
+
+        // Load variants
+        const variants = data?.variants || [];
+        const formattedVariants: Variant[] = variants.map((v: any) => ({
+          option1: v.option1 || '',
+          option2: v.option2 || '',
+          price: v.price || 100
+        }));
+        setDefaultVariants(formattedVariants);
+
+        // Clear custom variants when category changes
+        setCustomVariants(null);
+        setVariantsFileName(null);
+        setVariantsText('');
       })
       .catch(() => {
         setDefaultDescription('');
         setDescription('');
+        setDefaultVariants([]);
       })
-      .finally(() => setLoadingDescription(false));
+      .finally(() => {
+        setLoadingTemplate(false);
+        setLoadingDescription(false);
+      });
   }, [temuCategoryId]);
 
   // Load products
@@ -356,30 +378,80 @@ const TemuExportModal: React.FC<TemuExportModalProps> = ({
             )}
           </div>
 
-          {/* Custom Variants Upload/Paste */}
+          {/* Variants */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Variants (Color × Size × Price)
-            </label>
-            {customVariants ? (
-              <div className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-                <CheckIcon className="h-5 w-5 text-green-600 dark:text-green-400" />
-                <div className="flex-1">
-                  <div className="text-sm font-medium text-green-700 dark:text-green-300">
-                    {variantsFileName || 'Custom variants'}
-                  </div>
-                  <div className="text-xs text-green-600 dark:text-green-400">
-                    {customVariants.length} variants loaded
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Variants (Size × Price)
+              </label>
+              {customVariants && (
+                <button
+                  type="button"
+                  onClick={clearCustomVariants}
+                  className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  Khôi phục mặc định
+                </button>
+              )}
+            </div>
+
+            {loadingTemplate ? (
+              <div className="text-sm text-gray-500 py-2">Đang tải variants mặc định...</div>
+            ) : customVariants ? (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 p-3 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg">
+                  <CheckIcon className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+                  <div className="flex-1">
+                    <div className="text-sm font-medium text-orange-700 dark:text-orange-300">
+                      {variantsFileName || 'Custom variants'}
+                    </div>
+                    <div className="text-xs text-orange-600 dark:text-orange-400">
+                      {customVariants.length} variants (đã chỉnh sửa)
+                    </div>
                   </div>
                 </div>
-                <button
-                  onClick={clearCustomVariants}
-                  className="text-red-500 hover:text-red-700 text-sm"
-                >
-                  Xóa
-                </button>
+                {/* Show custom variants */}
+                <div className="max-h-32 overflow-y-auto border border-gray-200 dark:border-gray-600 rounded-lg p-2 text-xs bg-gray-50 dark:bg-gray-800">
+                  {customVariants.map((v, i) => (
+                    <div key={i} className="flex justify-between py-0.5">
+                      <span>{v.option1 || v.option2 || `Variant ${i+1}`}</span>
+                      <span className="text-gray-500">${v.price}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : defaultVariants.length > 0 ? (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                  <CheckIcon className="h-5 w-5 text-green-600 dark:text-green-400" />
+                  <div className="flex-1">
+                    <div className="text-sm font-medium text-green-700 dark:text-green-300">
+                      Variants mặc định của {selectedTemuCategory?.productName}
+                    </div>
+                    <div className="text-xs text-green-600 dark:text-green-400">
+                      {defaultVariants.length} variants
+                    </div>
+                  </div>
+                </div>
+                {/* Show default variants */}
+                <div className="max-h-32 overflow-y-auto border border-gray-200 dark:border-gray-600 rounded-lg p-2 text-xs bg-gray-50 dark:bg-gray-800">
+                  {defaultVariants.map((v, i) => (
+                    <div key={i} className="flex justify-between py-0.5">
+                      <span>{v.option1 || v.option2 || `Variant ${i+1}`}</span>
+                      <span className="text-gray-500">${v.price}</span>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-500">Muốn thay đổi? Nhập variants mới bên dưới:</p>
               </div>
             ) : (
+              <div className="text-sm text-yellow-600 dark:text-yellow-400 py-2">
+                ⚠ Không có variants mặc định. Vui lòng nhập variants:
+              </div>
+            )}
+
+            {/* Input area - always show if no custom variants */}
+            {!customVariants && (
               <div className="space-y-2">
                 {/* Paste JSON textarea */}
                 <div className="flex gap-2">
