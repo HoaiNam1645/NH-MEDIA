@@ -218,12 +218,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         // Write all product images starting from images.start_col
         if (imageStartCol) {
           const imgSlice = images.slice(0, maxImages);
+          console.log(`[Temu Export] Product ${productName.slice(0,30)}: ${images.length} images, writing ${imgSlice.length} to cols ${imageStartCol}-${imageStartCol + imgSlice.length - 1}`);
           for (let i = 0; i < imgSlice.length; i++) {
             const img = imgSlice[i];
             if (img?.url) {
               row.getCell(imageStartCol + i).value = img.url;
             }
           }
+        } else {
+          console.log(`[Temu Export] WARNING: No imageStartCol defined for this config!`);
         }
 
         rowIndex++;
