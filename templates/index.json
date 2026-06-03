@@ -170,5 +170,12 @@
       "NORMAL",
       "CUSTOM"
     ]
+  },
+  {
+    "categoryId": "12217",
+    "productName": "Tapestry",
+    "configs": [
+      "CUSTOM"
+    ]
   }
 ]
