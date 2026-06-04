@@ -144,10 +144,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Remove conditional formatting (causes ExcelJS write errors)
     (sheet as any).conditionalFormattings = [];
 
-    // Remove non-Template sheets
-    workbook.eachSheet((s: any, id: number) => {
-      if (s.name !== 'Template') workbook.removeWorksheet(id);
-    });
+    // Keep all sheets from template (Instructions, Images, Example, etc.)
 
     // Write data rows starting from row 5
     let rowIndex = config.start_row || 5;

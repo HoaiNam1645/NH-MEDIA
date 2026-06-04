@@ -38,7 +38,8 @@
       "Read(//g/Tu dong hoa/NH-MEDIA/$d/**)",
       "Bash(node create-user-guide.cjs)",
       "Bash(rm create-user-guide.cjs)",
-      "Bash(ls -la docs/*.docx)"
+      "Bash(ls -la docs/*.docx)",
+      "Bash(done)"
     ]
   }
 }
