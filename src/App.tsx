@@ -29,7 +29,6 @@ import ConnectedDashboardProvider from './components/ConnectedDashboardProvider'
 import Auth from './components/Auth';
 import MainContent from './components/MainContent';
 import ErrorBoundary from './components/ErrorBoundary';
-import CrawlExport from './pages/CrawlExport';
 // FCM removed during MySQL migration; foreground notifications come through
 // NotificationContext + the notification polling hook instead.
 
@@ -248,11 +247,6 @@ const ModalLoadingFallback = () => (
 
 
 const App: React.FC = () => {
-    // Render CrawlExport page without auth requirement
-    if (window.location.pathname === '/crawl-export') {
-        return <CrawlExport />;
-    }
-
     // --- USE NEW AUTH HOOK ---
     const { user, userProfile, authLoading, authError, logout } = useAuthLogic();
 
