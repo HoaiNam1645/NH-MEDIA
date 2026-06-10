@@ -3,6 +3,7 @@ import { requireAuth } from '../_lib/auth';
 import { Workbook } from '../_lib/excel';
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { badRequest, serverError } from '../_lib/helpers';
+import { uploadImage } from '../_lib/cloudinary';
 import fs from 'fs';
 import path from 'path';
 
@@ -76,6 +77,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       skuPrefix = 'CG',
       customVariants,
       customDescription,
+      reuploadImages = false,
     } = req.body || {};
 
     if (!crawledProduct) {
@@ -133,9 +135,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     }
 
-    const images = product.images || [];
+    let images = product.images || [];
     const productName = product.title || '';
     const description = customDescription || product.description || categoryIndex.description || '';
+
+    // Re-upload images to Cloudinary if requested
+    if (reuploadImages && images.length > 0) {
+      const uploadedUrls: string[] = [];
+      for (const img of images.slice(0, maxImages)) {
+        const imgUrl = typeof img === 'string' ? img : (img as any)?.url;
+        if (imgUrl) {
+          try {
+            const uploaded = await uploadImage(imgUrl, 'nh-media/crawl');
+            uploadedUrls.push(uploaded.url);
+          } catch (err) {
+            console.error('Failed to upload image:', imgUrl, err);
+            // Keep original URL if upload fails
+            uploadedUrls.push(imgUrl);
+          }
+        }
+      }
+      images = uploadedUrls;
+    }
 
     let variantCounter = 0;
     for (const variant of variants) {

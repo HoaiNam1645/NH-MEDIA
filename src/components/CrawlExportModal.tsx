@@ -92,6 +92,10 @@ const CrawlExportModal: React.FC<CrawlExportModalProps> = ({
   const [variantsFileName, setVariantsFileName] = useState<string | null>(null);
   const [variantsText, setVariantsText] = useState('');
 
+  // Re-upload images option
+  const [reuploadImages, setReuploadImages] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState('');
+
   const selectedTemuCategory = TEMU_CATEGORIES.find(c => c.categoryId === temuCategoryId);
   const sourceInfo = SOURCE_LABELS[crawledProduct.source] || { label: crawledProduct.source, color: 'bg-gray-100 text-gray-700' };
 
@@ -228,9 +232,15 @@ const CrawlExportModal: React.FC<CrawlExportModalProps> = ({
 
     setExporting(true);
     setError(null);
+    setUploadProgress('');
 
     try {
       const token = getToken();
+
+      if (reuploadImages) {
+        setUploadProgress('Uploading images to Cloudinary...');
+      }
+
       const response = await fetch('/api/export/temu-crawl', {
         method: 'POST',
         headers: {
@@ -247,6 +257,7 @@ const CrawlExportModal: React.FC<CrawlExportModalProps> = ({
           skuPrefix,
           customVariants: variants,
           customDescription: description,
+          reuploadImages, // Add this flag
         }),
       });
 
@@ -332,6 +343,22 @@ const CrawlExportModal: React.FC<CrawlExportModalProps> = ({
                 />
               ))}
             </div>
+
+            {/* Re-upload images option */}
+            <label className="flex items-center gap-2 mt-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={reuploadImages}
+                onChange={(e) => setReuploadImages(e.target.checked)}
+                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              />
+              <span className="text-sm text-gray-700 dark:text-gray-300">
+                Re-upload images to Cloudinary
+              </span>
+            </label>
+            {uploadProgress && (
+              <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">{uploadProgress}</p>
+            )}
           </div>
 
           {/* Temu Category & SKU */}
