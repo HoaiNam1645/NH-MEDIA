@@ -4,5 +4,8 @@
     "api/**/*.ts": {
       "includeFiles": "templates/**"
     }
-  }
+  },
+  "rewrites": [
+    { "source": "/crawl-export", "destination": "/index.html" }
+  ]
 }
