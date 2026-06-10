@@ -433,18 +433,67 @@ const CrawlExportModal: React.FC<CrawlExportModalProps> = ({
             {loadingTemplate ? (
               <div className="text-sm text-gray-500 py-2">Loading...</div>
             ) : customVariants ? (
-              <div className="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-                <div className="flex items-center gap-2">
-                  <CheckIcon className="h-5 w-5 text-green-600" />
-                  <span className="text-sm font-medium text-green-700 dark:text-green-300">
-                    {variantsFileName} ({customVariants.length} variants)
-                  </span>
+              <div className="space-y-2">
+                <div className="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <CheckIcon className="h-5 w-5 text-green-600" />
+                    <span className="text-sm font-medium text-green-700 dark:text-green-300">
+                      {variantsFileName} ({customVariants.length} variants)
+                    </span>
+                  </div>
+                </div>
+                {/* Show variant details */}
+                <div className="max-h-40 overflow-y-auto border border-gray-200 dark:border-gray-600 rounded-lg">
+                  <table className="w-full text-xs">
+                    <thead className="bg-gray-50 dark:bg-gray-700 sticky top-0">
+                      <tr>
+                        <th className="px-3 py-2 text-left text-gray-600 dark:text-gray-300 font-medium">Option 1</th>
+                        <th className="px-3 py-2 text-left text-gray-600 dark:text-gray-300 font-medium">Option 2</th>
+                        <th className="px-3 py-2 text-right text-gray-600 dark:text-gray-300 font-medium">Price</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                      {customVariants.map((v, i) => (
+                        <tr key={i} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                          <td className="px-3 py-1.5 text-gray-700 dark:text-gray-300">{v.option1 || '-'}</td>
+                          <td className="px-3 py-1.5 text-gray-700 dark:text-gray-300">{v.option2 || '-'}</td>
+                          <td className="px-3 py-1.5 text-right text-gray-700 dark:text-gray-300">${v.price}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             ) : defaultVariants.length > 0 ? (
-              <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                <div className="text-sm text-blue-700 dark:text-blue-300">
-                  Using default: {defaultVariants.length} variants
+              <div className="space-y-2">
+                <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <CheckIcon className="h-5 w-5 text-blue-600" />
+                    <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
+                      Using default: {defaultVariants.length} variants
+                    </span>
+                  </div>
+                </div>
+                {/* Show variant details */}
+                <div className="max-h-40 overflow-y-auto border border-gray-200 dark:border-gray-600 rounded-lg">
+                  <table className="w-full text-xs">
+                    <thead className="bg-gray-50 dark:bg-gray-700 sticky top-0">
+                      <tr>
+                        <th className="px-3 py-2 text-left text-gray-600 dark:text-gray-300 font-medium">Option 1</th>
+                        <th className="px-3 py-2 text-left text-gray-600 dark:text-gray-300 font-medium">Option 2</th>
+                        <th className="px-3 py-2 text-right text-gray-600 dark:text-gray-300 font-medium">Price</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                      {defaultVariants.map((v, i) => (
+                        <tr key={i} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                          <td className="px-3 py-1.5 text-gray-700 dark:text-gray-300">{v.option1 || '-'}</td>
+                          <td className="px-3 py-1.5 text-gray-700 dark:text-gray-300">{v.option2 || '-'}</td>
+                          <td className="px-3 py-1.5 text-right text-gray-700 dark:text-gray-300">${v.price}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             ) : null}
