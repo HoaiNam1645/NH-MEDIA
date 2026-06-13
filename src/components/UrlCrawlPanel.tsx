@@ -281,9 +281,10 @@ const UrlCrawlPanel: React.FC = () => {
         },
         body: JSON.stringify({
           products,
-          temuCategoryId,
+          categoryId: temuCategoryId,
           configType,
           skuPrefix,
+          variants: defaultVariants,
         }),
       });
 
