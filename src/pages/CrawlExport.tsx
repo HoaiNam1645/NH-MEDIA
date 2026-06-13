@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import CrawlExportModal from '../components/CrawlExportModal';
 
 export interface CrawledProduct {
-  source: 'etsy' | 'tiktok' | 'temu';
+  source: 'etsy' | 'tiktok' | 'temu' | 'amazon' | 'aliexpress' | 'unknown';
   title: string;
   images: string[];
   price?: string;

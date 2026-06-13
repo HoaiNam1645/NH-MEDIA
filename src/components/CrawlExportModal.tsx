@@ -63,6 +63,9 @@ const SOURCE_LABELS: Record<string, { label: string; color: string }> = {
   etsy: { label: 'Etsy', color: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' },
   tiktok: { label: 'TikTok', color: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400' },
   temu: { label: 'Temu', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' },
+  amazon: { label: 'Amazon', color: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' },
+  aliexpress: { label: 'AliExpress', color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' },
+  unknown: { label: 'Other', color: 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400' },
 };
 
 const CrawlExportModal: React.FC<CrawlExportModalProps> = ({
