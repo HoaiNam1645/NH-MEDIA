@@ -96,6 +96,15 @@ if (fs.existsSync(staticDir)) {
 }
 
 const PORT = parseInt(process.env.PORT || '3001', 10);
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`[server] listening on http://0.0.0.0:${PORT}`);
 });
+
+// Keep process alive and handle shutdown
+process.on('SIGINT', () => {
+  console.log('[server] shutting down...');
+  server.close(() => process.exit(0));
+});
+
+// Prevent process from exiting
+process.stdin.resume();

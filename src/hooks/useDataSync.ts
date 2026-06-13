@@ -489,10 +489,20 @@ export const useDataSync = ({
                                 historicalSyncAbortControllerRef.current = new AbortController();
                                 runHistoricalSync(accountsForHistoricalSync, initialDisplayRecords, historicalSyncAbortControllerRef.current.signal);
                             }
-                        } catch (error) {
+                        } catch (error: any) {
                             if (syncSignal.aborted) return;
                             console.error("Failed during initial sync:", error);
-                            addNotification("Initial sync encountered an error.", "error");
+
+                            // Check for auth errors and show helpful message
+                            const errorMsg = error?.message || '';
+                            if (errorMsg.includes('401') || errorMsg.includes('UNAUTHENTICATED') || errorMsg.includes('Login Required')) {
+                                addNotification("Một số tài khoản email cần đăng nhập lại. Vào Account Manager để kết nối lại.", "error");
+                            } else {
+                                addNotification("Initial sync encountered an error.", "error");
+                            }
+                        } finally {
+                            // Always clear sync state after initial sync attempt
+                            setSyncState(null);
                         }
                     }, 5000); // 5 second delay
                 }

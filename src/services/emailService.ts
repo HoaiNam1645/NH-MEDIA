@@ -261,6 +261,9 @@ async function fetchGmailMessages(
 
         if (!listResponse.ok) {
             const errorText = await listResponse.text();
+            if (listResponse.status === 401) {
+                throw new Error(`401 UNAUTHENTICATED: Token expired for ${account.email}. Please reconnect.`);
+            }
             throw new Error(`Gmail API error (list): Status ${listResponse.status}. Body: ${errorText}`);
         }
 

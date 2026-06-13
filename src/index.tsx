@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 import App from './App';
+import CrawlExport from './pages/CrawlExport';
 
 
 const handleAuthCallback = (): boolean => {
@@ -46,10 +47,14 @@ if (!handleAuthCallback()) {
   }
 
   const root = ReactDOM.createRoot(rootElement);
+
+  // CrawlExport page doesn't require auth - render separately
+  const isCrawlExport = window.location.pathname === '/crawl-export';
+
   root.render(
     <React.StrictMode>
       <BrowserRouter>
-        <App />
+        {isCrawlExport ? <CrawlExport /> : <App />}
       </BrowserRouter>
     </React.StrictMode>
   );
