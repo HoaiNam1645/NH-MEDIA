@@ -107,18 +107,33 @@ function parseTikTok(html: string, url: string): Partial<CrawledProduct> {
 
 // Parse Temu product page
 function parseTemu(html: string, url: string): Partial<CrawledProduct> {
-  // Extract title
-  const titleMatch = html.match(/<h1[^>]*>([^<]+)<\/h1>/i) ||
-                     html.match(/<meta\s+property="og:title"\s+content="([^"]+)"/i);
-  const title = titleMatch ? decodeHtml(titleMatch[1].trim()) : '';
+  // Extract title - prioritize og:title as h1 may not be in server HTML
+  const titleMatch = html.match(/<meta\s+property="og:title"\s+content="([^"]+)"/i) ||
+                     html.match(/<h1[^>]*>([^<]+)<\/h1>/i);
+  let title = titleMatch ? decodeHtml(titleMatch[1].trim()) : '';
+  // Clean up title suffix
+  title = title.replace(/\s*[-–|]\s*Temu\s*(Vietnam|[A-Z][a-z]+)?\s*$/i, '');
 
   // Extract images
   const images: string[] = [];
-  const ogImageMatch = html.match(/<meta\s+property="og:image"\s+content="([^"]+)"/i);
-  if (ogImageMatch) images.push(ogImageMatch[1]);
 
-  // Find Temu CDN images
-  const cdnMatches = html.matchAll(/https:\/\/[^"'\s]*(?:temu|kwcdn)[^"'\s]*\.(?:jpg|jpeg|png|webp)/gi);
+  // Try to extract from URL query param (top_gallery_url)
+  try {
+    const urlObj = new URL(url);
+    const topGalleryUrl = urlObj.searchParams.get('top_gallery_url');
+    if (topGalleryUrl) {
+      images.push(topGalleryUrl);
+    }
+  } catch {}
+
+  // Try og:image
+  const ogImageMatch = html.match(/<meta\s+property="og:image"\s+content="([^"]+)"/i);
+  if (ogImageMatch && !images.includes(ogImageMatch[1])) {
+    images.push(ogImageMatch[1]);
+  }
+
+  // Find product images from kwcdn (filter out UI icons)
+  const cdnMatches = html.matchAll(/https:\/\/img\.kwcdn\.com\/product[^"'\s]*\.(?:jpg|jpeg|png|webp)/gi);
   for (const m of cdnMatches) {
     if (!images.includes(m[0])) images.push(m[0]);
   }
