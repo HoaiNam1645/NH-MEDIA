@@ -1,0 +1,39 @@
+{
+  "fixed_columns": {
+    "E": "29157",
+    "F": "Clothing, Shoes & Jewelry / Women / Handbags & Wallets / Top-Handle Bags",
+    "G": "Custom product",
+    "H": "Combined techniques",
+    "I": "Organic material (e.g., acrylic/resin) customization technique",
+    "J": "Laser cutting - image",
+    "K": "Laser cutting - text",
+    "L": "{product_name}",
+    "T": "{product_description}",
+    "N": "{sku}",
+    "O": "Add",
+    "U": "🎄 Festive & Meaningful Gift: Perfect for Christmas, Valentine’s, birthdays, or any special occasion – makes every moment extra special!",
+    "FH": "{option1}",
+    "FI": "{option2}",
+    "FG": "Color × Size",
+    "GG": "{price}",
+    "GF": "200",
+    "GJ": "0.5",
+    "GK": "18",
+    "GL": "18",
+    "GM": "5",
+    "GN": "Single set",
+    "GO": "No",
+    "GP": "1",
+    "GQ": "pack",
+    "GY": "Shipping",
+    "GZ": "7 Days",
+    "HA": "Imported",
+    "HC": "United States",
+    "JD": "No Warning Applicable"
+  },
+  "images": {
+    "start_col": "FU",
+    "end_col": "GD"
+  },
+  "start_row": 5
+}

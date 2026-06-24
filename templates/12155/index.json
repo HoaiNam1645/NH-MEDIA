@@ -1,0 +1,30 @@
+{
+  "categoryId": "12155",
+  "productName": "Sash Wreaths",
+  "variants": [
+    {
+      "option1": "Design 1",
+      "option2": "5x50 in",
+      "price": 149.95
+    },
+    {
+      "option1": "Design 2",
+      "option2": "5x50 in",
+      "price": 149.95
+    },
+    {
+      "option1": "Design 1",
+      "option2": "5x70 in",
+      "price": 155.5
+    },
+    {
+      "option1": "Design 2",
+      "option2": "5x70 in",
+      "price": 155.5
+    }
+  ],
+  "availableConfigs": [
+    "CUSTOM"
+  ],
+  "description": "Suitable for decorating wreaths or flower bouquets, a perfect item for holiday decoration, as well as bouquet decoration for special occasions like Graduation, wedding, and prom."
+}

@@ -69,6 +69,13 @@
     ]
   },
   {
+    "categoryId": "12155",
+    "productName": "Sash Wreaths",
+    "configs": [
+      "CUSTOM"
+    ]
+  },
+  {
     "categoryId": "12193",
     "productName": "Acrylic Blocks",
     "configs": [
@@ -143,6 +150,13 @@
     ]
   },
   {
+    "categoryId": "29157",
+    "productName": "Quilted Weekend Bag",
+    "configs": [
+      "NORMAL"
+    ]
+  },
+  {
     "categoryId": "30152",
     "productName": "Cap",
     "configs": [
@@ -159,13 +173,6 @@
   {
     "categoryId": "40381",
     "productName": "Booktracker",
-    "configs": [
-      "CUSTOM"
-    ]
-  },
-  {
-    "categoryId": "12217",
-    "productName": "Tapestry",
     "configs": [
       "CUSTOM"
     ]
