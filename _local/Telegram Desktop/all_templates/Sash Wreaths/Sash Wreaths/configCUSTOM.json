@@ -1,0 +1,41 @@
+{
+  "start_row": 5,
+  "fixed_columns": {
+    "E": "12155",
+    "F": "Home & Kitchen / Home Décor Products / Home Décor Accents / Wreaths",
+    "G": "Custom product",
+    "H": "Combined techniques",
+    "I": "Organic material (e.g., acrylic/resin) customization technique",
+    "J": "Laser cutting - image",
+    "K": "Laser cutting - text",
+    "L": "{product_name}",
+    "T": "{product_description}",
+    "N": "{sku}",
+    "O": "Add",
+    "U": "🎄 Festive & Meaningful Gift: Perfect for Christmas, Valentine’s, birthdays, or any special occasion – makes every moment extra special!
+",
+    "ED": "Use Without Electricity",
+    "ES": "{option1}",
+    "ER": "{option2}",
+    "EQ": "Color × Size",
+    "FQ": "{price}",
+    "FP": "200",
+    "FT": "1",
+    "FU": "18",
+    "FV": "18",
+    "FW": "5",
+    "FX": "Single set",
+    "FY": "No",
+    "FZ": "1",
+    "GA": "pack",
+    "GI": "Shipping",
+    "GJ": "7 Days",
+    "GK": "Imported",
+    "GM": "United States",
+    "IN": "No Warning Applicable",
+  },
+  "images": {
+    "start_col": "FE",
+    "end_col": "FN"
+  }
+}
