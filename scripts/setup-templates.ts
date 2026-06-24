@@ -5,7 +5,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const SOURCE_DIR = 'G:/Tu dong hoa/NH-MEDIA/Telegram Desktop/all_templates';
+const SOURCE_DIR = 'G:/Tu dong hoa/NH-MEDIA/_local/Telegram Desktop/all_templates';
 const TARGET_DIR = 'G:/Tu dong hoa/NH-MEDIA/templates';
 
 // Default variants per category
@@ -193,6 +193,24 @@ const CATEGORY_META: Record<string, { productName: string; variants: any[] }> = 
       { option1: 'One Size', price: 109 },
     ],
   },
+  '12155': {
+    productName: 'Sash Wreaths',
+    variants: [
+      { option1: 'Design 1', option2: '5x50 in', price: 149.95 },
+      { option1: 'Design 2', option2: '5x50 in', price: 149.95 },
+      { option1: 'Design 1', option2: '5x70 in', price: 155.5 },
+      { option1: 'Design 2', option2: '5x70 in', price: 155.5 },
+    ],
+  },
+  '29157': {
+    productName: 'Quilted Weekend Bag',
+    variants: [
+      { option1: 'Design 1', option2: 'M', price: 194.39 },
+      { option1: 'Design 1', option2: 'L', price: 194.39 },
+      { option1: 'Design 2', option2: 'M', price: 194.39 },
+      { option1: 'Design 2', option2: 'L', price: 194.39 },
+    ],
+  },
 };
 
 function extractFromConfigRaw(configPath: string): { categoryId: string; config: any } | null {
@@ -241,7 +259,7 @@ async function setup() {
   const configFiles = findAllConfigs(SOURCE_DIR);
   console.log(`Found ${configFiles.length} config files\n`);
 
-  const categories: Record<string, { configs: Record<string, any>; xlsxTemplate: string }> = {};
+  const categories: Record<string, { configs: Record<string, any>; xlsxTemplate: string; description: string }> = {};
 
   for (const configPath of configFiles) {
     const result = extractFromConfigRaw(configPath);
@@ -260,12 +278,20 @@ async function setup() {
     }
 
     if (!categories[categoryId]) {
-      // Find xlsx in same folder
+      // Find xlsx and mota in same folder
       const configDir = path.dirname(configPath);
-      const xlsxFile = fs.readdirSync(configDir).find(f => f.endsWith('.xlsx') && !f.startsWith('~'));
+      const dirFiles = fs.readdirSync(configDir);
+      const xlsxFile = dirFiles.find(f => f.endsWith('.xlsx') && !f.startsWith('~'));
+      const motaFile = dirFiles.find(f =>
+        f.toLowerCase().includes('mota') && (f.endsWith('.txt') || f.endsWith('.md'))
+      );
+      const description = motaFile
+        ? fs.readFileSync(path.join(configDir, motaFile), 'utf-8').trim()
+        : '';
       categories[categoryId] = {
         configs: {},
-        xlsxTemplate: xlsxFile ? path.join(configDir, xlsxFile) : ''
+        xlsxTemplate: xlsxFile ? path.join(configDir, xlsxFile) : '',
+        description,
       };
     }
 
@@ -281,12 +307,13 @@ async function setup() {
 
     const meta = CATEGORY_META[catId] || { productName: catId, variants: [] };
 
-    // Write index.json with variants
+    // Write index.json with variants and description
     fs.writeFileSync(path.join(catDir, 'index.json'), JSON.stringify({
       categoryId: catId,
       productName: meta.productName,
       variants: meta.variants,
-      availableConfigs: Object.keys(data.configs)
+      availableConfigs: Object.keys(data.configs),
+      ...(data.description ? { description: data.description } : {}),
     }, null, 2));
 
     // Write each config

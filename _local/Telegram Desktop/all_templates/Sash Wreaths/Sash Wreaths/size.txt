@@ -1,0 +1,5 @@
+Size,Color
+5x50 in,Design 1,149.95
+5x50 in,Design 2,149.95
+5x70 in,Design 1,155.5
+5x70 in,Design 2,155.5
