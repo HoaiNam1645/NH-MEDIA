@@ -38,6 +38,7 @@ const TEMU_CATEGORIES: TemuCategory[] = [
   { categoryId: '11899', productName: 'Blanket', configs: ['NORMAL', 'CUSTOM'] },
   { categoryId: '12042', productName: 'Pillow', configs: ['CUSTOM'] },
   { categoryId: '12141', productName: 'Ornament', configs: ['NORMAL', 'CUSTOM'] },
+  { categoryId: '12141-wh', productName: 'Window Hanging', configs: ['NORMAL', 'CUSTOM'] },
   { categoryId: '12155', productName: 'Sash Wreaths', configs: ['CUSTOM'] },
   { categoryId: '12193', productName: 'Acrylic Blocks', configs: ['CUSTOM'] },
   { categoryId: '12253', productName: 'Doormat', configs: ['NORMAL', 'CUSTOM', 'PACK_CUSTOM'] },

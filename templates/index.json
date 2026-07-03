@@ -69,6 +69,14 @@
     ]
   },
   {
+    "categoryId": "12141-wh",
+    "productName": "Window Hanging",
+    "configs": [
+      "NORMAL",
+      "CUSTOM"
+    ]
+  },
+  {
     "categoryId": "12155",
     "productName": "Sash Wreaths",
     "configs": [
