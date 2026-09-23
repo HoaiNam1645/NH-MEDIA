@@ -85,6 +85,7 @@ const ExportIcon = ({ className = 'h-4 w-4' }: IconProps) => (
 const ProductManager: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const routeState = location.state as { from?: string } | null;
 
   const parts = location.pathname.split('/').filter(Boolean); // ['products','c',catId,'f',prodId]
   const isOpen = parts[0] === 'products';
@@ -92,19 +93,40 @@ const ProductManager: React.FC = () => {
   const prodId = parts[3] === 'f' ? parts[4] : undefined;
   const level: 1 | 2 | 3 = prodId ? 3 : catId ? 2 : 1;
 
+  useEffect(() => {
+    if (isOpen) return;
+    const currentPath = `${location.pathname}${location.search}${location.hash}`;
+    if (currentPath && !currentPath.startsWith('/products')) {
+      sessionStorage.setItem('productsUploadReturnTo', currentPath);
+    }
+  }, [isOpen, location.pathname, location.search, location.hash]);
+
+  const navigateWithinProducts = useCallback((to: string) => {
+    navigate(to, { state: routeState || undefined });
+  }, [navigate, routeState]);
+
+  const closeProducts = useCallback(() => {
+    const from = routeState?.from || sessionStorage.getItem('productsUploadReturnTo');
+    if (from && !from.startsWith('/products')) {
+      navigate(from, { replace: true });
+      return;
+    }
+    navigate('/overview', { replace: true });
+  }, [navigate, routeState]);
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 bg-gray-50 dark:bg-gray-900 overflow-y-auto">
-      {level === 1 && <CategoriesView navigate={navigate} />}
-      {level === 2 && <FoldersView categoryId={catId!} navigate={navigate} />}
-      {level === 3 && <MockupsView categoryId={catId!} productId={prodId!} navigate={navigate} />}
+      {level === 1 && <CategoriesView navigate={navigateWithinProducts} onClose={closeProducts} />}
+      {level === 2 && <FoldersView categoryId={catId!} navigate={navigateWithinProducts} onClose={closeProducts} />}
+      {level === 3 && <MockupsView categoryId={catId!} productId={prodId!} navigate={navigateWithinProducts} onClose={closeProducts} />}
     </div>
   );
 };
 
 /* ---------- Header / breadcrumb ---------- */
-const Header: React.FC<{ crumbs: { label: string; to?: string }[]; navigate: (to: string) => void }> = ({ crumbs, navigate }) => (
+const Header: React.FC<{ crumbs: { label: string; to?: string }[]; navigate: (to: string) => void; onClose: () => void }> = ({ crumbs, navigate, onClose }) => (
   <div className="sticky top-0 z-10 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex items-center justify-between">
     <div className="flex items-center gap-2 text-sm">
       {crumbs.map((c, i) => (
@@ -118,14 +140,14 @@ const Header: React.FC<{ crumbs: { label: string; to?: string }[]; navigate: (to
         </span>
       ))}
     </div>
-    <button onClick={() => navigate('/')} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500">
+    <button onClick={onClose} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500">
       <CloseIcon />
     </button>
   </div>
 );
 
 /* ---------- LEVEL 1: Categories ---------- */
-const CategoriesView: React.FC<{ navigate: (to: string) => void }> = ({ navigate }) => {
+const CategoriesView: React.FC<{ navigate: (to: string) => void; onClose: () => void }> = ({ navigate, onClose }) => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [uncategorized, setUncategorized] = useState(0);
   const [newName, setNewName] = useState('');
@@ -164,7 +186,7 @@ const CategoriesView: React.FC<{ navigate: (to: string) => void }> = ({ navigate
 
   return (
     <>
-      <Header crumbs={[{ label: 'Products' }]} navigate={navigate} />
+      <Header crumbs={[{ label: 'Products' }]} navigate={navigate} onClose={onClose} />
       <div className="max-w-6xl mx-auto px-6 py-6 space-y-6">
         {error && <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-4 py-3 rounded-lg">{error}</div>}
 
@@ -206,7 +228,7 @@ const CategoriesView: React.FC<{ navigate: (to: string) => void }> = ({ navigate
 };
 
 /* ---------- LEVEL 2: Folders in a category ---------- */
-const FoldersView: React.FC<{ categoryId: string; navigate: (to: string) => void }> = ({ categoryId, navigate }) => {
+const FoldersView: React.FC<{ categoryId: string; navigate: (to: string) => void; onClose: () => void }> = ({ categoryId, navigate, onClose }) => {
   const [categoryName, setCategoryName] = useState('');
   const [products, setProducts] = useState<Product[]>([]);
   const [page, setPage] = useState(1);
@@ -256,7 +278,7 @@ const FoldersView: React.FC<{ categoryId: string; navigate: (to: string) => void
 
   return (
     <>
-      <Header crumbs={[{ label: 'Products', to: '/products' }, { label: categoryName }]} navigate={navigate} />
+      <Header crumbs={[{ label: 'Products', to: '/products' }, { label: categoryName }]} navigate={navigate} onClose={onClose} />
       <div className="max-w-6xl mx-auto px-6 py-6 space-y-6">
         {error && <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-4 py-3 rounded-lg">{error}</div>}
 
@@ -322,7 +344,7 @@ const FoldersView: React.FC<{ categoryId: string; navigate: (to: string) => void
 };
 
 /* ---------- LEVEL 3: Mockups in a folder ---------- */
-const MockupsView: React.FC<{ categoryId: string; productId: string; navigate: (to: string) => void }> = ({ categoryId, productId, navigate }) => {
+const MockupsView: React.FC<{ categoryId: string; productId: string; navigate: (to: string) => void; onClose: () => void }> = ({ categoryId, productId, navigate, onClose }) => {
   const [product, setProduct] = useState<Product | null>(null);
   const [categoryName, setCategoryName] = useState('');
   const [images, setImages] = useState<ProductImage[]>([]);
@@ -415,7 +437,7 @@ const MockupsView: React.FC<{ categoryId: string; productId: string; navigate: (
   if (!product) {
     return (
       <>
-        <Header crumbs={[{ label: 'Products', to: '/products' }]} navigate={navigate} />
+        <Header crumbs={[{ label: 'Products', to: '/products' }]} navigate={navigate} onClose={onClose} />
         <p className="text-gray-500 p-6">{error || 'Loading…'}</p>
       </>
     );
@@ -430,6 +452,7 @@ const MockupsView: React.FC<{ categoryId: string; productId: string; navigate: (
           { label: title || 'Product' },
         ]}
         navigate={navigate}
+        onClose={onClose}
       />
       <div className="max-w-5xl mx-auto px-6 py-6 space-y-6">
         {error && <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-4 py-3 rounded-lg">{error}</div>}

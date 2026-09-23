@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useDashboard } from '../contexts/DashboardContext';
 import { useUI } from '../contexts/UIContext';
 
@@ -19,6 +19,7 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar }) => {
     const navigate = useNavigate();
+    const location = useLocation();
     const { role, permissions, handleLogout } = useDashboard();
     const {
         activeTab,
@@ -132,7 +133,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar }) => {
 
             <div className={`border-t border-gray-200 dark:border-gray-700 space-y-2 ${isCollapsed ? 'p-2' : 'p-4'}`}>
                 <button
-                    onClick={() => navigate('/products')}
+                    onClick={() => navigate('/products', {
+                        state: { from: `${location.pathname}${location.search}${location.hash}` }
+                    })}
                     className={`
                     w-full flex items-center py-2.5 rounded-lg transition-colors group relative
                     ${isCollapsed ? 'justify-center px-0' : 'px-3'}
@@ -252,4 +255,3 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar }) => {
 };
 
 export default Sidebar;
-

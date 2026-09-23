@@ -39,7 +39,12 @@
       "Bash(node create-user-guide.cjs)",
       "Bash(rm create-user-guide.cjs)",
       "Bash(ls -la docs/*.docx)",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(mkdir -p /tmp/nhmrouter/contexts /tmp/nhmrouter/components /tmp/nhmrouter/utils)",
+      "Read(//tmp/**)",
+      "Bash(sshpass -p 'feline.Damvanl0i' scp root@151.106.112.168:/var/www/nh-media/src/contexts/UIContext.tsx contexts/UIContext.tsx)",
+      "Bash(sshpass -p 'feline.Damvanl0i' scp root@151.106.112.168:/var/www/nh-media/src/components/DeepLinkHandler.tsx components/DeepLinkHandler.tsx)",
+      "Bash(sshpass -p 'feline.Damvanl0i' scp root@151.106.112.168:/var/www/nh-media/src/utils/notificationPayloadBuilder.ts utils/notificationPayloadBuilder.ts)"
     ]
   }
 }

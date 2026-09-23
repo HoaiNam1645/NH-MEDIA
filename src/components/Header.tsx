@@ -29,6 +29,7 @@ const Header: React.FC = () => {
     teamId, // For NotificationCenter Firestore sync
     allowedAccounts, // For notification filtering by shop
     performGlobalSearch, // Global Search Function
+    user,
   } = useDashboard();
 
   const {
@@ -57,7 +58,7 @@ const Header: React.FC = () => {
     role,
     permissions,
     allowedAccounts,
-    email: useDashboard().user?.email // Include email for soft delete
+    email: user?.email // Include email for soft delete
   } : null;
 
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
